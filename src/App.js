@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
-import CardTemplate from "./components/CardTemplate";
 import createTheme from "./theme";
+import Sidebar from "./components/Sidebar";
 
 export default function App() {
   const theme = createTheme();
@@ -8,7 +8,7 @@ export default function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-        <CardTemplate />
+        <Sidebar />
       </ThemeProvider>
     </div>
   );
