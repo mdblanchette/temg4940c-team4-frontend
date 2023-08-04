@@ -120,12 +120,10 @@ export default function BondTrendCard() {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Stack spacing={2}>
-          <Typography variant="h6"> Bond Trend </Typography>
+    <Stack spacing={2}>
+      <Typography variant="h6"> Bond Trend </Typography>
 
-          {/* <Stack spacing={1}>
+      {/* <Stack spacing={1}>
             <Typography variant="body2">
               Average Credit Rating History
             </Typography>
@@ -136,51 +134,47 @@ export default function BondTrendCard() {
             />
           </Stack> */}
 
-          <Stack spacing={1}>
-            <Stack direction="row" spacing="auto" sx={{ alignItems: "center" }}>
-              <Typography variant="body1">
-                Average Credit Spread History
-              </Typography>
-              <TimeSetting
-                timeValue={chosenTimeRatingSpread}
-                functionHandleValue={(newValue) =>
-                  setChosenTimeRatingSpread(newValue)
-                }
-                timeInput={inputTimeRatingSpread}
-                functionHandleInput={(newInput) =>
-                  setInputTimeRatingSpread(newInput)
-                }
-              />
-            </Stack>
-            <GraphSection
-              title="Average spread"
-              summaryValue={averageSpread}
-              dataValue={creditSpread}
-            />
-          </Stack>
-
-          <Stack spacing={1}>
-            <Stack direction="row" spacing="auto" sx={{ alignItems: "center" }}>
-              <Typography variant="body1">Average Price History</Typography>
-              <TimeSetting
-                timeValue={chosenTimeRatingPrice}
-                functionHandleValue={(newValue) =>
-                  setChosenTimeRatingPrice(newValue)
-                }
-                timeInput={inputTimeRatingPrice}
-                functionHandleInput={(newInput) =>
-                  setInputTimeRatingPrice(newInput)
-                }
-              />
-            </Stack>
-            <GraphSection
-              title="Average price"
-              summaryValue={averagePrice}
-              dataValue={bondPrice}
-            />
-          </Stack>
+      <Stack spacing={1}>
+        <Stack direction="row" spacing="auto" sx={{ alignItems: "center" }}>
+          <Typography variant="body1">Average Credit Spread History</Typography>
+          <TimeSetting
+            timeValue={chosenTimeRatingSpread}
+            functionHandleValue={(newValue) =>
+              setChosenTimeRatingSpread(newValue)
+            }
+            timeInput={inputTimeRatingSpread}
+            functionHandleInput={(newInput) =>
+              setInputTimeRatingSpread(newInput)
+            }
+          />
         </Stack>
-      </CardContent>
-    </Card>
+        <GraphSection
+          title="Average spread"
+          summaryValue={averageSpread}
+          dataValue={creditSpread}
+        />
+      </Stack>
+
+      <Stack spacing={1}>
+        <Stack direction="row" spacing="auto" sx={{ alignItems: "center" }}>
+          <Typography variant="body1">Average Price History</Typography>
+          <TimeSetting
+            timeValue={chosenTimeRatingPrice}
+            functionHandleValue={(newValue) =>
+              setChosenTimeRatingPrice(newValue)
+            }
+            timeInput={inputTimeRatingPrice}
+            functionHandleInput={(newInput) =>
+              setInputTimeRatingPrice(newInput)
+            }
+          />
+        </Stack>
+        <GraphSection
+          title="Average price"
+          summaryValue={averagePrice}
+          dataValue={bondPrice}
+        />
+      </Stack>
+    </Stack>
   );
 }

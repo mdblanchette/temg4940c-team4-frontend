@@ -15,6 +15,9 @@ import {
   Button,
   Dialog,
   Chip,
+  Select,
+  MenuItem,
+  Slider,
 } from "@mui/material";
 
 import {
@@ -23,7 +26,7 @@ import {
   CloseOutlined,
   AddOutlined,
 } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function createBondData(
   Name,
@@ -61,7 +64,7 @@ export default function BondInfoColumn() {
   // bondDatas = Array of each bond's complete information (regardless users choose to show it or not)
   const bondDatas = [
     createBondData(
-      "JP Morgan Chase Co.",
+      "Bond A",
       "United States",
       "JP Morgan Chase Co.",
       "A+",
@@ -76,7 +79,7 @@ export default function BondInfoColumn() {
       "Financial"
     ),
     createBondData(
-      "Goldman Sachs",
+      "Bond B",
       "United States",
       "Goldman Sachs",
       "A",
@@ -91,7 +94,7 @@ export default function BondInfoColumn() {
       "Financial"
     ),
     createBondData(
-      "Barclays PLC",
+      "Bond C",
       "United Kingdom",
       "Barclays PLC",
       "A-",
@@ -106,7 +109,7 @@ export default function BondInfoColumn() {
       "Financial"
     ),
     createBondData(
-      "HSBC Holdings",
+      "Bond D",
       "Hong Kong",
       "HSBC Holdings",
       "A",
@@ -121,7 +124,7 @@ export default function BondInfoColumn() {
       "Financial"
     ),
     createBondData(
-      "UBS Group AG",
+      "Bond E",
       "Switzerland",
       "UBS Group AG",
       "A-",
@@ -173,12 +176,18 @@ export default function BondInfoColumn() {
   }
 
   const [page, setPage] = useState(0);
+  const [chosenAlert, setChosenAlert] = useState(
+    "Based on Predicted Rating Migration"
+  );
+  const [valueAlert, setValueAlert] = useState([1, 10]);
   //const [rowPage, setRowPage] = useState(5);
   const [openParameterModal, setOpenParameterModal] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
 
   function handleChangePage(event, newPage) {
     setPage(newPage);
+  }
+  function handleValueAlertChange(event, newValue) {
+    setValueAlert(newValue);
   }
 
   //   function handleChangeRowsPerPage(event) {
@@ -190,77 +199,116 @@ export default function BondInfoColumn() {
     setOpenParameterModal(false);
   }
 
-  function ParameterModal() {
+  function ParameterModal({ change }) {
     function addParameter(category) {
-      const updatedChosenParameters = categories.filter(
-        (category) => [...chosenParameters, category].indexOf(category) !== -1
-      );
+      if (!chosenParameters.includes(category)) {
+        const updatedChosenParameters = categories.filter((param) => {
+          return chosenParameters.includes(param) || param === category;
+        });
 
-      //handleParameterChange(updatedChosenParameters);
-      //setChosenParameters((prevCategories) => [...prevCategories, category]);
+        change(updatedChosenParameters);
+      }
     }
 
     const handleRemove = (categoryToDelete) => () => {
-      // setChosenParameters((prevCategories) =>
-      //   prevCategories.filter((category) => category !== categoryToDelete)
-      // );
-
       const updatedChosenParameters = chosenParameters.filter(
         (category) => category !== categoryToDelete
       );
 
-      handleParameterChange(updatedChosenParameters);
+      change(updatedChosenParameters);
     };
 
     return (
       <Card>
         <CardContent>
-          <Stack spacing={2}>
-            <Stack direction="row" spacing="auto" sx={{ alignItems: "center" }}>
-              <Typography variant="body1">
-                Choose metrics to be shown in column
-              </Typography>
-              <IconButton onClick={handleClickSetting}>
-                <CloseOutlined />
-              </IconButton>
-            </Stack>
+          <Stack spacing={4}>
+            <Stack spacing={1}>
+              <Stack
+                direction="row"
+                spacing="auto"
+                sx={{ alignItems: "center" }}
+              >
+                <Typography variant="body1">
+                  Choose metrics to be shown in column
+                </Typography>
+                <IconButton onClick={handleClickSetting}>
+                  <CloseOutlined />
+                </IconButton>
+              </Stack>
 
-            <Stack spacing={1} direction="row">
-              {chosenParameters.map((category) => (
-                <Chip
-                  variant="outlined"
-                  label={
-                    category.toLowerCase() === "maturitydate"
-                      ? "Maturity"
-                      : category.toLowerCase() === "netchange"
-                      ? "Net Change"
-                      : category
+              <Stack spacing={1} direction="row">
+                {categories.map((category) => {
+                  if (chosenParameters.includes(category)) {
+                    return (
+                      <Chip
+                        key={category}
+                        variant="outlined"
+                        label={
+                          category.toLowerCase() === "maturitydate"
+                            ? "Maturity"
+                            : category.toLowerCase() === "netchange"
+                            ? "Net Change"
+                            : category
+                        }
+                        onDelete={handleRemove(category)}
+                      />
+                    );
                   }
-                  onDelete={handleRemove(category)}
+                })}
+              </Stack>
+
+              <Stack spacing={1} direction="row">
+                {categories.map((category) => {
+                  if (!chosenParameters.includes(category)) {
+                    return (
+                      <Chip
+                        icon={<AddOutlined />}
+                        key={category}
+                        variant="outlined"
+                        label={
+                          category.toLowerCase() === "maturitydate"
+                            ? "Maturity"
+                            : category.toLowerCase() === "netchange"
+                            ? "Net Change"
+                            : category
+                        }
+                        onClick={() => addParameter(category)}
+                      />
+                    );
+                  }
+                })}
+              </Stack>
+            </Stack>
+
+            <Stack spacing={1}>
+              <Typography variant="body1">Change alert setting</Typography>
+              <Select
+                value={chosenAlert}
+                onChange={(event) => setChosenAlert(event.target.value)}
+              >
+                <MenuItem value="Based on Predicted Rating Migration">
+                  Based on Predicted Rating Migration
+                </MenuItem>
+                <MenuItem value="Based on Predicted Change in Spread">
+                  Based on Predicted Change in Spread
+                </MenuItem>
+              </Select>
+
+              <Stack spacing={1} sx={{ width: "100%" }}>
+                <Slider
+                  value={valueAlert}
+                  onChange={handleValueAlertChange}
+                  valueLabelDisplay="auto"
+                  color="secondary"
                 />
-              ))}
+                <Typography variant="body2">
+                  {valueAlert[0]}
+                  {" - "}
+                  {valueAlert[1]}
+                  {"%"}
+                </Typography>
+              </Stack>
             </Stack>
-
-            <Stack spacing={1} direction="row">
-              {categories
-                .filter((category) => !chosenParameters.includes(category))
-                .map((category) => (
-                  <Chip
-                    icon={<AddOutlined />}
-                    variant="outlined"
-                    label={
-                      category.toLowerCase() === "maturitydate"
-                        ? "Maturity"
-                        : category.toLowerCase() === "netchange"
-                        ? "Net Change"
-                        : category
-                    }
-                    onClick={addParameter(category)}
-                  />
-                ))}
-            </Stack>
-
-            {/* <Typography variant="body1">Change alert setting</Typography> */}
           </Stack>
         </CardContent>
       </Card>
@@ -268,105 +316,101 @@ export default function BondInfoColumn() {
   }
 
   return (
-    <Card>
-      <CardContent>
-        <Stack spacing={2}>
-          {/* title of table */}
-          <Box
-            sx={{
-              display: "flex",
-              flexGrow: 1,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Bond Information
-            </Typography>
+    <Stack spacing={2}>
+      {/* title of table */}
+      <Box
+        sx={{
+          display: "flex",
+          flexGrow: 1,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          Basic Information
+        </Typography>
 
-            <IconButton onClick={() => setOpenParameterModal(true)}>
-              <SettingsOutlined />
-            </IconButton>
+        <IconButton onClick={() => setOpenParameterModal(true)}>
+          <SettingsOutlined />
+        </IconButton>
 
-            <Dialog
-              open={openParameterModal}
-              close={handleClickSetting}
-              maxWidth="lg"
-            >
-              <ParameterModal />
-            </Dialog>
-          </Box>
+        <Dialog
+          open={openParameterModal}
+          close={handleClickSetting}
+          maxWidth="lg"
+        >
+          <ParameterModal change={handleParameterChange} />
+        </Dialog>
+      </Box>
 
-          <TableContainer>
-            <Table>
-              {/* head of table */}
-              <TableHead>
-                <TableRow>
-                  {chosenParameters.map((parameter) => (
-                    <TableCell key={parameter} align="left">
-                      {parameter.toLowerCase() === "maturitydate"
-                        ? "Maturity"
-                        : parameter.toLowerCase() === "netchange"
-                        ? "Net Change"
-                        : parameter}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
+      <TableContainer>
+        <Table>
+          {/* head of table */}
+          <TableHead>
+            <TableRow>
+              {chosenParameters.map((parameter) => (
+                <TableCell key={parameter} align="left">
+                  {parameter.toLowerCase() === "maturitydate"
+                    ? "Maturity"
+                    : parameter.toLowerCase() === "netchange"
+                    ? "Net Change"
+                    : parameter}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
 
-              {/* content of table */}
-              <TableBody>
-                {bondDatas.map((data) => (
-                  <TableRow key={data.Name}>
-                    {chosenParameters.map((category) => (
-                      <TableCell
-                        key={data[category]}
-                        align="left"
-                        style={{
-                          color:
-                            category === "Migration" || category === "Spread"
-                              ? data[category] > 0.099
-                                ? "#0EA371"
-                                : "#DC4A41"
-                              : "default",
-                        }}
-                      >
-                        {data[category]}
-                      </TableCell>
-                    ))}
-                    <TableCell key="addOption">
-                      <IconButton>
-                        <AddCircleOutlined sx={{ color: "#007AF5" }} />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
+          {/* content of table */}
+          <TableBody>
+            {bondDatas.map((data) => (
+              <TableRow key={data.Name}>
+                {chosenParameters.map((category) => (
+                  <TableCell
+                    key={data[category]}
+                    align="left"
+                    style={{
+                      color:
+                        category === "Migration" || category === "Spread"
+                          ? data[category] > 0.099
+                            ? "#0EA371"
+                            : "#DC4A41"
+                          : "default",
+                    }}
+                  >
+                    {data[category]}
+                  </TableCell>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                <TableCell key="addOption">
+                  <IconButton>
+                    <AddCircleOutlined sx={{ color: "#007AF5" }} />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-          {/* end of table, pagination */}
-          <Box
-            sx={{
-              display: "flex",
-              flexGrow: 1,
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="body2" sx={{ flexGrow: 1 }}>
-              {bondDatas.length} Bonds Total
-            </Typography>
-            <Pagination
-              count={bondDatas.length}
-              page={page}
-              variant="outlined"
-              shape="rounded"
-              onChange={handleChangePage}
-            />
-          </Box>
-        </Stack>
-      </CardContent>
-    </Card>
+      {/* end of table, pagination */}
+      <Box
+        sx={{
+          display: "flex",
+          flexGrow: 1,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="body2" sx={{ flexGrow: 1 }}>
+          {bondDatas.length} Bonds Total
+        </Typography>
+        <Pagination
+          count={bondDatas.length}
+          page={page}
+          variant="outlined"
+          shape="rounded"
+          onChange={handleChangePage}
+        />
+      </Box>
+    </Stack>
   );
 }
