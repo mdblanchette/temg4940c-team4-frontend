@@ -4,7 +4,7 @@ import { Layout as DashboardLayout } from "../layout/Layout";
 import WorldMap from "../components/MainPage/WorldMap";
 import WorldCredit from "../components/MainPage/WorldCredit";
 import MacroeconomicIndicators from "../components/MainPage/MacroeconomicIndicators";
-import BondTable from "../components/MainPage/BondTable";
+import BondInfoColumn from "../components/BondScreener/BondInfoColumn";
 
 const Page = () => {
   return (
@@ -27,7 +27,7 @@ const Page = () => {
             <MacroeconomicIndicators />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <BondTable />
+            <BondInfoColumn />
           </Grid>
         </Grid>
       </Container>

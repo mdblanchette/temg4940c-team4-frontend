@@ -18,6 +18,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import { Link } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -132,8 +133,8 @@ export default function MiniDrawer({ children }) {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Overview", "Watchlist", "Bond Screener"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <Link href="/" passHref>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -148,15 +149,74 @@ export default function MiniDrawer({ children }) {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <InboxIcon />
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText
+                  primary={"Overview"}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                  }}
+                />
               </ListItemButton>
-            </ListItem>
-          ))}
+            </Link>
+          </ListItem>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <Link href="/watchlist" passHref>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={"Watchlist"}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                  }}
+                />
+              </ListItemButton>
+            </Link>
+          </ListItem>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <Link href="/bondscreener" passHref>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={"Bond Screener"}
+                  sx={{
+                    opacity: open ? 1 : 0,
+                  }}
+                />
+              </ListItemButton>
+            </Link>
+          </ListItem>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, my: 5 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3, my: 5, mx: -3 }}>
         {children}
       </Box>
     </Box>
