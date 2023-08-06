@@ -46,7 +46,9 @@ export default function WorldCredit() {
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Credit Rating Migration</Typography>
-            <Typography variant="h5">+20.1%</Typography>
+            <Typography variant="h5" color="green">
+              +20.1%
+            </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Sovereign Rating</Typography>
@@ -54,7 +56,9 @@ export default function WorldCredit() {
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Predicted Spread Change</Typography>
-            <Typography variant="h5">AAA</Typography>
+            <Typography variant="h5" color={"red"}>
+              -520 bp
+            </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Issuer Rating</Typography>
@@ -62,7 +66,7 @@ export default function WorldCredit() {
           </Grid>
           <Grid item xs={6}>
             <Typography>Prediction Confidence Level</Typography>
-            <Typography variant="h5">AAA</Typography>
+            <Typography variant="h5">74.3%</Typography>
           </Grid>
         </Grid>
       </CardContent>
