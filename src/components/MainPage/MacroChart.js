@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { ThemeProvider, createTheme, alpha } from "@mui/material/styles";
-import Chart from "react-apexcharts";
-
+import Chart from "./chart";
 const theme = createTheme();
 
 class MacroChart extends Component {
