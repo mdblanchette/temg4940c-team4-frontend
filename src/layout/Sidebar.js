@@ -7,18 +7,18 @@ import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
+import AutoAwesomeMosaicIcon from "@mui/icons-material/AutoAwesomeMosaic";
+import TroubleshootIcon from "@mui/icons-material/Troubleshoot";
+import DataSaverOffIcon from "@mui/icons-material/DataSaverOff";
 import { Link } from "@mui/material";
+import { useRouter } from "next/router";
 
 const drawerWidth = 240;
 
@@ -70,6 +70,15 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
+const StyledLink = styled(Link)(({ theme }) => ({
+  textDecoration: "none",
+  color: "inherit",
+}));
+
+const StyledListItemIcon = styled(ListItemIcon)(({ theme, active }) => ({
+  color: active ? "#6466f1" : "#9da4ae",
+}));
+
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
@@ -79,17 +88,25 @@ const Drawer = styled(MuiDrawer, {
   boxSizing: "border-box",
   ...(open && {
     ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
+    "& .MuiDrawer-paper": {
+      ...openedMixin(theme),
+      background: "#1c2536",
+    },
   }),
   ...(!open && {
     ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
+    "& .MuiDrawer-paper": {
+      ...closedMixin(theme),
+      background: "#1c2536",
+    },
   }),
 }));
 
 export default function MiniDrawer({ children }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
+  const currentURL = router.asPath;
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -116,8 +133,18 @@ export default function MiniDrawer({ children }) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Covalence
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              flexGrow: 1,
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "24px",
+            }}
+          >
+            COVALENCE
           </Typography>
         </Toolbar>
       </AppBar>
@@ -131,92 +158,69 @@ export default function MiniDrawer({ children }) {
             )}
           </IconButton>
         </DrawerHeader>
-        <Divider />
-        <List>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <Link href="/" passHref>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Overview"}
-                  sx={{
-                    opacity: open ? 1 : 0,
-                  }}
-                />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <Link href="/watchlist" passHref>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Watchlist"}
-                  sx={{
-                    opacity: open ? 1 : 0,
-                  }}
-                />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <Link href="/bondscreener" passHref>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"Bond Screener"}
-                  sx={{
-                    opacity: open ? 1 : 0,
-                  }}
-                />
-              </ListItemButton>
-            </Link>
-          </ListItem>
+
+        <List sx={{ color: "#9da4ae" }}>
+          <ListItemButton
+            component={StyledLink}
+            to="/"
+            onClick={handleDrawerClose}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#252e3e",
+              },
+              color: currentURL === "/" ? "#ffffff" : "inherit",
+            }}
+          >
+            <StyledListItemIcon active={currentURL === "/"}>
+              <AutoAwesomeMosaicIcon />
+            </StyledListItemIcon>
+            <ListItemText
+              primary="Overview"
+              primaryTypographyProps={{ fontWeight: "bold" }}
+            />
+          </ListItemButton>
+          <ListItemButton
+            component={StyledLink}
+            to="/watchlist"
+            onClick={handleDrawerClose}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#252e3e",
+              },
+              color: currentURL === "/watchlist" ? "#ffffff" : "inherit",
+            }}
+          >
+            <StyledListItemIcon active={currentURL === "/watchlist"}>
+              <DataSaverOffIcon />
+            </StyledListItemIcon>
+            <ListItemText
+              primary="Watchlist"
+              primaryTypographyProps={{ fontWeight: "bold" }}
+            />
+          </ListItemButton>
+          <ListItemButton
+            component={StyledLink}
+            to="/bondscreener"
+            onClick={handleDrawerClose}
+            sx={{
+              "&:hover": {
+                backgroundColor: "#252e3e",
+              },
+              color: currentURL === "/bondscreener" ? "#ffffff" : "inherit",
+            }}
+          >
+            <StyledListItemIcon active={currentURL === "/bondscreener"}>
+              <TroubleshootIcon />
+            </StyledListItemIcon>
+            <ListItemText
+              primary="Bond Screener"
+              primaryTypographyProps={{ fontWeight: "bold" }}
+            />
+          </ListItemButton>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3, my: 5, mx: -3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <DrawerHeader />
         {children}
       </Box>
     </Box>
