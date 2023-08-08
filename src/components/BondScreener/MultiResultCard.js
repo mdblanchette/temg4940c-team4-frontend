@@ -17,6 +17,7 @@ import { CloseOutlined, Search } from "@mui/icons-material";
 import BondInfoColumn from "./BondInfoColumn";
 import BondPredictionCard from "./BondPredictionCard";
 import AdvancedSetting from "./AdvancedSearchSetting";
+import BondInfoTable from "./BondInfoTable";
 
 export default function MultiResultCard() {
   const [openSetting, setOpenSetting] = useState(false);
@@ -101,7 +102,7 @@ export default function MultiResultCard() {
             </IconButton> */}
           </Stack>
 
-          <BondInfoColumn />
+          <BondInfoTable />
           <BondPredictionCard />
         </Stack>
       </CardContent>

@@ -5,6 +5,7 @@ import WorldMap from "../components/MainPage/WorldMap";
 import WorldCredit from "../components/MainPage/WorldCredit";
 import MacroeconomicIndicators from "../components/MainPage/MacroeconomicIndicators";
 import BondInfoColumn from "../components/BondScreener/BondInfoColumn";
+import BondInfoTable from "../components/BondScreener/BondInfoTable";
 
 const Page = () => {
   return (
@@ -27,7 +28,7 @@ const Page = () => {
             <MacroeconomicIndicators />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <BondInfoColumn />
+            <BondInfoTable />
           </Grid>
         </Grid>
       </Container>
