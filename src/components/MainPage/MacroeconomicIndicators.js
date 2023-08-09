@@ -1,11 +1,16 @@
 import {
+  Autocomplete,
+  Box,
   Card,
   CardContent,
   CardHeader,
   Grid,
   MenuItem,
   TextField,
+  Typography,
 } from "@mui/material";
+import MacroChart from "./MacroChart";
+import IndicatorDropdown from "./IndicatorDropdown";
 
 const time_period = [
   "Today",
@@ -34,6 +39,7 @@ export default function MacroeconomicIndicators() {
   return (
     <Card sx={{ height: "100%" }}>
       <CardHeader
+        sx={{ paddingBottom: 0 }} // Adjust the padding here
         action={
           <TextField
             select
@@ -51,20 +57,77 @@ export default function MacroeconomicIndicators() {
         title="Macroeconomic Indicators"
       />
       <CardContent>
-        <Grid container spacing={3}>
-          <Grid item xs={4}>
-            <TextField
-              fullWidth
-              label="Indicator"
-              select
-              defaultValue={"GDP Growth Rate"}
-            >
-              {indicators.map((option) => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </TextField>
+        <Grid container spacing={1}>
+          <Grid item xs={6}>
+            <MacroChart />
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <IndicatorDropdown
+                label="Indicator A"
+                defaultValue="GDP Growth Rate"
+              />
+              <IndicatorDropdown
+                label="Indicator B"
+                defaultValue="Interest Rate"
+              />
+            </Box>
+          </Grid>
+          <Grid container xs={6} spacing={2}>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <IndicatorDropdown
+                label="Indicator"
+                defaultValue="Inflation Rate"
+              />
+              <Typography variant="h5">XXX</Typography>
+            </Grid>
           </Grid>
         </Grid>
       </CardContent>

@@ -39,7 +39,7 @@ export default function WorldCredit() {
         title="Credit Analytics"
       />
       <CardContent>
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           <Grid item xs={6}>
             <Typography>Country</Typography>
             <Typography variant="h5">GLOBAL</Typography>

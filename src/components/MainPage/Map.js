@@ -1,12 +1,13 @@
 import {
+  Autocomplete,
   Box,
-  Button,
   Card,
   CardContent,
   IconButton,
   InputAdornment,
   OutlinedInput,
   SvgIcon,
+  TextField,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
@@ -25,6 +26,45 @@ const mapHeight = 400;
 
 export default function Map() {
   const [position, setPosition] = useState({ center: [0, 20], zoom: 1 });
+  const oecdCountries = [
+    { name: "Australia", code: "AUS" },
+    { name: "Austria", code: "AUT" },
+    { name: "Belgium", code: "BEL" },
+    { name: "Canada", code: "CAN" },
+    { name: "Chile", code: "CHL" },
+    { name: "Czech Republic", code: "CZE" },
+    { name: "Denmark", code: "DNK" },
+    { name: "Estonia", code: "EST" },
+    { name: "Finland", code: "FIN" },
+    { name: "France", code: "FRA" },
+    { name: "Germany", code: "DEU" },
+    { name: "Greece", code: "GRC" },
+    { name: "Hungary", code: "HUN" },
+    { name: "Iceland", code: "ISL" },
+    { name: "Ireland", code: "IRL" },
+    { name: "Israel", code: "ISR" },
+    { name: "Italy", code: "ITA" },
+    { name: "Japan", code: "JPN" },
+    { name: "Korea", code: "KOR" },
+    { name: "Latvia", code: "LVA" },
+    { name: "Lithuania", code: "LTU" },
+    { name: "Luxembourg", code: "LUX" },
+    { name: "Mexico", code: "MEX" },
+    { name: "Netherlands", code: "NLD" },
+    { name: "New Zealand", code: "NZL" },
+    { name: "Norway", code: "NOR" },
+    { name: "Poland", code: "POL" },
+    { name: "Portugal", code: "PRT" },
+    { name: "Slovak Republic", code: "SVK" },
+    { name: "Slovenia", code: "SVN" },
+    { name: "Spain", code: "ESP" },
+    { name: "Sweden", code: "SWE" },
+    { name: "Switzerland", code: "CHE" },
+    { name: "Turkey", code: "TUR" },
+    { name: "United Kingdom", code: "GBR" },
+    { name: "United States", code: "USA" },
+  ];
+
   function handleZoomIn() {
     if (position.zoom >= 4) setPosition((pos) => ({ ...pos, zoom: 4 }));
     else setPosition((pos) => ({ ...pos, zoom: pos.zoom + 1 }));
@@ -35,9 +75,6 @@ export default function Map() {
     else setPosition((pos) => ({ ...pos, zoom: pos.zoom - 1 }));
   }
 
-  function handleReset() {
-    setPosition({ center: [0, 20], zoom: 1 });
-  }
   return (
     <Card sx={{ height: "100%" }}>
       <CardContent>
@@ -77,6 +114,7 @@ export default function Map() {
                           default: { fill: "#6466f1" },
                           hover: { fill: "#04D" },
                           pressed: { fill: "#none" },
+                          outline: "none",
                         }}
                       />
                     ))
@@ -92,28 +130,34 @@ export default function Map() {
             display="flex"
             alignItems="center"
             justifyContent="flex-start"
-            sx={{ width: "40%", padding: "0 10px" }}
+            sx={{ padding: "0 10px" }}
           >
-            <OutlinedInput
-              defaultValue=""
-              placeholder="Search country"
-              size="small"
-              startAdornment={
-                <InputAdornment position="start">
-                  <SvgIcon color="action" fontSize="small">
-                    <MagnifyingGlassIcon />
-                  </SvgIcon>
-                </InputAdornment>
-              }
-              sx={{
-                maxWidth: 300,
-                backgroundColor: "white",
-                "&:hover": {
-                  backgroundColor: "white",
-                },
-                "&:focus": {
-                  backgroundColor: "white",
-                },
+            <Autocomplete
+              options={oecdCountries}
+              getOptionLabel={(option) => option.name}
+              autoHighlight
+              renderInput={(params) => {
+                return (
+                  <TextField
+                    {...params}
+                    defaultValue=""
+                    variant="filled"
+                    label="Search country"
+                    inputProps={{
+                      ...params.inputProps,
+                      autoComplete: "new-password",
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <MagnifyingGlassIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      width: 200,
+                      backgroundColor: "#ffffff",
+                    }}
+                  />
+                );
               }}
             />
           </Box>
@@ -126,23 +170,12 @@ export default function Map() {
             justifyContent="flex-end"
             sx={{ width: "40%", padding: "0 10px" }}
           >
-            <IconButton>
-              <AddCircleIcon
-                fontSize="medium"
-                sx={{ color: "#6466f1" }}
-                onClick={handleZoomIn}
-              />
+            <IconButton onClick={handleZoomIn}>
+              <AddCircleIcon fontSize="medium" sx={{ color: "#6466f1" }} />
             </IconButton>
-            <IconButton>
-              <RemoveCircleIcon
-                fontSize="medium"
-                sx={{ color: "#6466f1" }}
-                onClick={handleZoomOut}
-              />
+            <IconButton onClick={handleZoomOut}>
+              <RemoveCircleIcon fontSize="medium" sx={{ color: "#6466f1" }} />
             </IconButton>
-            <Button variant="contained" size="small" onClick={handleReset}>
-              Reset
-            </Button>
           </Box>
         </Box>
       </CardContent>

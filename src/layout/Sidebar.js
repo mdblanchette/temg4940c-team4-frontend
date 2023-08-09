@@ -75,8 +75,8 @@ const StyledLink = styled(Link)(({ theme }) => ({
   color: "inherit",
 }));
 
-const StyledListItemIcon = styled(ListItemIcon)(({ theme, active }) => ({
-  color: active ? "#6466f1" : "#9da4ae",
+const StyledListItemIcon = styled(ListItemIcon)(({ theme }) => ({
+  color: "inherit",
 }));
 
 const Drawer = styled(MuiDrawer, {
@@ -141,7 +141,7 @@ export default function MiniDrawer({ children }) {
               flexGrow: 1,
               textAlign: "center",
               fontWeight: "bold",
-              fontSize: "24px",
+              fontSize: "25px",
             }}
           >
             COVALENCE
@@ -171,7 +171,9 @@ export default function MiniDrawer({ children }) {
               color: currentURL === "/" ? "#ffffff" : "inherit",
             }}
           >
-            <StyledListItemIcon active={currentURL === "/"}>
+            <StyledListItemIcon
+              sx={{ color: currentURL === "/" ? "#6466f1" : "inherit" }}
+            >
               <AutoAwesomeMosaicIcon />
             </StyledListItemIcon>
             <ListItemText
@@ -190,7 +192,11 @@ export default function MiniDrawer({ children }) {
               color: currentURL === "/watchlist" ? "#ffffff" : "inherit",
             }}
           >
-            <StyledListItemIcon active={currentURL === "/watchlist"}>
+            <StyledListItemIcon
+              sx={{
+                color: currentURL === "/watchlist" ? "#6466f1" : "inherit",
+              }}
+            >
               <DataSaverOffIcon />
             </StyledListItemIcon>
             <ListItemText
@@ -209,7 +215,11 @@ export default function MiniDrawer({ children }) {
               color: currentURL === "/bondscreener" ? "#ffffff" : "inherit",
             }}
           >
-            <StyledListItemIcon active={currentURL === "/bondscreener"}>
+            <StyledListItemIcon
+              sx={{
+                color: currentURL === "/bondscreener" ? "#6466f1" : "inherit",
+              }}
+            >
               <TroubleshootIcon />
             </StyledListItemIcon>
             <ListItemText
