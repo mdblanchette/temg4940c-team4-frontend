@@ -4,8 +4,11 @@ import Map from "../components/MainPage/Map";
 import WorldCredit from "../components/MainPage/WorldCredit";
 import MacroeconomicIndicators from "../components/MainPage/MacroeconomicIndicators";
 import BondInfoColumn from "../components/BondScreener/BondInfoColumn";
+import { useState } from "react";
 
 const Page = () => {
+  const [selectedCountry, setSelectedCountry] = useState("Global");
+  var country = "Global";
   return (
     <Box
       component="main"
@@ -16,16 +19,19 @@ const Page = () => {
       <Container maxWidth="xl">
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
-            <Map />
+            <Map
+              selectedCountry={selectedCountry}
+              setSelectedCountry={setSelectedCountry}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <WorldCredit />
+            <WorldCredit selectedCountry={selectedCountry} />
           </Grid>
           <Grid item xs={12} sm={8}>
             <MacroeconomicIndicators />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <WorldCredit />
+            <WorldCredit selectedCountry={selectedCountry} />
           </Grid>
           <Grid item xs={12} sm={12}>
             <BondInfoColumn />

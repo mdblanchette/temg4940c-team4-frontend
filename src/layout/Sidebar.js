@@ -14,6 +14,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import DeblurIcon from "@mui/icons-material/Deblur";
 import AutoAwesomeMosaicIcon from "@mui/icons-material/AutoAwesomeMosaic";
 import TroubleshootIcon from "@mui/icons-material/Troubleshoot";
 import DataSaverOffIcon from "@mui/icons-material/DataSaverOff";

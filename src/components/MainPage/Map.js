@@ -1,17 +1,14 @@
 import {
   Autocomplete,
   Box,
+  Button,
   Card,
   CardContent,
   IconButton,
-  InputAdornment,
-  OutlinedInput,
-  SvgIcon,
   TextField,
 } from "@mui/material";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import MagnifyingGlassIcon from "@heroicons/react/24/solid/MagnifyingGlassIcon";
 import {
   ComposableMap,
   Geographies,
@@ -24,45 +21,45 @@ const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const mapWidth = 800;
 const mapHeight = 400;
 
-export default function Map() {
+export default function Map({ selectedCountry, setSelectedCountry }) {
   const [position, setPosition] = useState({ center: [0, 20], zoom: 1 });
   const oecdCountries = [
-    { name: "🇦🇺 Australia", code: "AUS" },
-    { name: "🇦🇹 Austria", code: "AUT" },
-    { name: "🇧🇪 Belgium", code: "BEL" },
-    { name: "🇨🇦 Canada", code: "CAN" },
-    { name: "🇨🇱 Chile", code: "CHL" },
-    { name: "🇨🇿 Czech Republic", code: "CZE" },
-    { name: "🇩🇰 Denmark", code: "DNK" },
-    { name: "🇪🇪 Estonia", code: "EST" },
-    { name: "🇫🇮 Finland", code: "FIN" },
-    { name: "🇫🇷 France", code: "FRA" },
-    { name: "🇩🇪 Germany", code: "DEU" },
-    { name: "🇬🇷 Greece", code: "GRC" },
-    { name: "🇭🇺 Hungary", code: "HUN" },
-    { name: "🇮🇸 Iceland", code: "ISL" },
-    { name: "🇮🇪 Ireland", code: "IRL" },
-    { name: "🇮🇱 Israel", code: "ISR" },
-    { name: "🇮🇹 Italy", code: "ITA" },
-    { name: "🇯🇵 Japan", code: "JPN" },
-    { name: "🇰🇷 Korea", code: "KOR" },
-    { name: "🇱🇻 Latvia", code: "LVA" },
-    { name: "🇱🇹 Lithuania", code: "LTU" },
-    { name: "🇱🇺 Luxembourg", code: "LUX" },
-    { name: "🇲🇽 Mexico", code: "MEX" },
-    { name: "🇳🇱 Netherlands", code: "NLD" },
-    { name: "🇳🇿 New Zealand", code: "NZL" },
-    { name: "🇳🇴 Norway", code: "NOR" },
-    { name: "🇵🇱 Poland", code: "POL" },
-    { name: "🇵🇹 Portugal", code: "PRT" },
-    { name: "🇸🇰 Slovak Republic", code: "SVK" },
-    { name: "🇸🇮 Slovenia", code: "SVN" },
-    { name: "🇪🇸 Spain", code: "ESP" },
-    { name: "🇸🇪 Sweden", code: "SWE" },
-    { name: "🇨🇭 Switzerland", code: "CHE" },
-    { name: "🇹🇷 Turkey", code: "TUR" },
-    { name: "🇬🇧 United Kingdom", code: "GBR" },
-    { name: "🇺🇸 United States", code: "USA" },
+    { flag: "🇦🇺", name: "Australia", code: "AUS" },
+    { flag: "🇦🇹", name: "Austria", code: "AUT" },
+    { flag: "🇧🇪", name: "Belgium", code: "BEL" },
+    { flag: "🇨🇦", name: "Canada", code: "CAN" },
+    { flag: "🇨🇱", name: "Chile", code: "CHL" },
+    { flag: "🇨🇿", name: "Czechia", code: "CZE" },
+    { flag: "🇩🇰", name: "Denmark", code: "DNK" },
+    { flag: "🇪🇪", name: "Estonia", code: "EST" },
+    { flag: "🇫🇮", name: "Finland", code: "FIN" },
+    { flag: "🇫🇷", name: "France", code: "FRA" },
+    { flag: "🇩🇪", name: "Germany", code: "DEU" },
+    { flag: "🇬🇷", name: "Greece", code: "GRC" },
+    { flag: "🇭🇺", name: "Hungary", code: "HUN" },
+    { flag: "🇮🇸", name: "Iceland", code: "ISL" },
+    { flag: "🇮🇪", name: "Ireland", code: "IRL" },
+    { flag: "🇮🇱", name: "Israel", code: "ISR" },
+    { flag: "🇮🇹", name: "Italy", code: "ITA" },
+    { flag: "🇯🇵", name: "Japan", code: "JPN" },
+    { flag: "🇰🇷", name: "Korea", code: "KOR" },
+    { flag: "🇱🇻", name: "Latvia", code: "LVA" },
+    { flag: "🇱🇹", name: "Lithuania", code: "LTU" },
+    { flag: "🇱🇺", name: "Luxembourg", code: "LUX" },
+    { flag: "🇲🇽", name: "Mexico", code: "MEX" },
+    { flag: "🇳🇱", name: "Netherlands", code: "NLD" },
+    { flag: "🇳🇿", name: "New Zealand", code: "NZL" },
+    { flag: "🇳🇴", name: "Norway", code: "NOR" },
+    { flag: "🇵🇱", name: "Poland", code: "POL" },
+    { flag: "🇵🇹", name: "Portugal", code: "PRT" },
+    { flag: "🇸🇰", name: "Slovakia", code: "SVK" },
+    { flag: "🇸🇮", name: "Slovenia", code: "SVN" },
+    { flag: "🇪🇸", name: "Spain", code: "ESP" },
+    { flag: "🇸🇪", name: "Sweden", code: "SWE" },
+    { flag: "🇨🇭", name: "Switzerland", code: "CHE" },
+    { flag: "🇹🇷", name: "Turkey", code: "TUR" },
+    { flag: "🇬🇧", name: "United Kingdom", code: "GBR" },
+    { flag: "🇺🇸", name: "United States of America", code: "USA" },
   ];
 
   function handleZoomIn() {
@@ -73,6 +70,23 @@ export default function Map() {
   function handleZoomOut() {
     if (position.zoom <= 1) setPosition((pos) => ({ ...pos, zoom: 1 }));
     else setPosition((pos) => ({ ...pos, zoom: pos.zoom - 1 }));
+  }
+
+  function resetZoom() {
+    setPosition((pos) => ({ ...pos, zoom: 1 }));
+  }
+
+  function isOECD(countryName) {
+    return oecdCountries.some((c) => c.name === countryName);
+  }
+
+  function renderCountry(countryName) {
+    // If country is an OECD country, setSelectedCountry to country name
+    if (isOECD(countryName)) {
+      setSelectedCountry(countryName);
+    } else if (countryName === "Global") {
+      setSelectedCountry("Global");
+    }
   }
 
   return (
@@ -111,11 +125,19 @@ export default function Map() {
                         geography={geo}
                         stroke="#000000"
                         style={{
-                          default: { fill: "#6466f1" },
-                          hover: { fill: "#04D" },
-                          pressed: { fill: "#none" },
-                          outline: "none",
+                          default: {
+                            fill:
+                              selectedCountry === geo.properties.name
+                                ? "#04D"
+                                : "#D6D6DA",
+                          },
+                          hover: {
+                            fill: isOECD(geo.properties.name)
+                              ? "#04D"
+                              : "#D6D6DA",
+                          },
                         }}
+                        onClick={() => renderCountry(geo.properties.name)}
                       />
                     ))
                   }
@@ -136,6 +158,19 @@ export default function Map() {
               options={oecdCountries}
               getOptionLabel={(option) => option.name}
               autoHighlight
+              onChange={(e, option) => {
+                if (option) renderCountry(option.name);
+              }}
+              renderOption={(props, option) => (
+                <Box
+                  component="li"
+                  sx={{ fontSize: 14, "& > span": { mr: 1 } }}
+                  {...props}
+                >
+                  <span>{option.flag}</span>
+                  {option.name} ({option.code})
+                </Box>
+              )}
               renderInput={(params) => {
                 return (
                   <TextField
@@ -146,11 +181,6 @@ export default function Map() {
                     inputProps={{
                       ...params.inputProps,
                       autoComplete: "new-password",
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <MagnifyingGlassIcon />
-                        </InputAdornment>
-                      ),
                     }}
                     sx={{
                       width: 200,
@@ -176,6 +206,16 @@ export default function Map() {
             <IconButton onClick={handleZoomOut}>
               <RemoveCircleIcon fontSize="medium" sx={{ color: "#6466f1" }} />
             </IconButton>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => {
+                renderCountry("Global");
+                resetZoom();
+              }}
+            >
+              Reset
+            </Button>
           </Box>
         </Box>
       </CardContent>

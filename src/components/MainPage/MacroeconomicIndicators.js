@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Box,
   Card,
   CardContent,
@@ -12,30 +11,34 @@ import {
 import MacroChart from "./MacroChart";
 import IndicatorDropdown from "./IndicatorDropdown";
 
-const time_period = [
-  "Today",
-  "This Week",
-  "This Month",
-  "This Year",
-  "2 Years",
-  "5 Years",
-  "10 Years",
-];
-
-const indicators = [
-  "GDP Growth Rate",
-  "Interest Rate",
-  "Inflation Rate",
-  "Unemployment Rate",
-  "Government Debt to GDP",
-  "Government Spending",
-  "Balance of Trade",
-  "Current Account to GDP",
-  "Credit Rating",
-  "Corporate Tax Rate",
-];
-
 export default function MacroeconomicIndicators() {
+  const time_period = [
+    "Today",
+    "This Week",
+    "This Month",
+    "This Year",
+    "2 Years",
+    "5 Years",
+    "10 Years",
+  ];
+
+  const indicators = [
+    "GDP Growth Rate",
+    "Interest Rate",
+    "Inflation Rate",
+    "Unemployment Rate",
+    "Government Debt to GDP",
+    "Government Spending",
+    "Balance of Trade",
+    "Current Account to GDP",
+    "Credit Rating",
+    "Corporate Tax Rate",
+  ];
+  async function getData() {
+    const res = await fetch("http://localhost:3500/company/:id");
+    return res.json();
+  }
+
   return (
     <Card sx={{ height: "100%" }}>
       <CardHeader
