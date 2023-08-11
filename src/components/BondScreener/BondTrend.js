@@ -1,9 +1,93 @@
-import { Typography, Box, Stack, Autocomplete, TextField } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Stack,
+  Autocomplete,
+  TextField,
+  Card,
+  CardContent,
+  CardHeader,
+  MenuItem,
+} from "@mui/material";
+import { Chart } from "../MainPage/chart";
+import { alpha, useTheme } from "@mui/material/styles";
 
 import { useState } from "react";
-import { LineChart } from "@mui/x-charts";
+// import { LineChart } from "@mui/x-charts";
+
+function useChartOptions(unit) {
+  const theme = useTheme();
+
+  return {
+    chart: {
+      type: "area",
+      stacked: false,
+      height: 350,
+      zoom: {
+        type: "x",
+        enabled: true,
+        autoScaleYaxis: true,
+      },
+      toolbar: {
+        autoSelected: "zoom",
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        inverseColors: false,
+        opacityFrom: 0.5,
+        opacityTo: 0,
+        stops: [0, 90, 100],
+      },
+    },
+    yaxis: {
+      labels: {
+        formatter: (value) => `${value} ${unit}`,
+        offsetX: -10,
+      },
+    },
+    //   labels: {
+    //     formatter: function (val) {
+    //       return (val / 1000000).toFixed(0);
+    //     },
+    //   },
+    //   title: {
+    //     text: 'Value'
+    //   },
+    // },
+    xaxis: {
+      categories: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
+      labels: {
+        offsetY: 5,
+        style: {
+          colors: theme.palette.text.secondary,
+        },
+      },
+    },
+  };
+}
 
 export default function BondTrendCard() {
+  //const chartOptions = useChartOptions();
+
   const [chosenTimeRatingSpread, setChosenTimeRatingSpread] = useState("Today");
   const [inputTimeRatingSpread, setInputTimeRatingSpread] = useState("");
   const [chosenTimeRatingPrice, setChosenTimeRatingPrice] = useState("Today");
@@ -27,146 +111,82 @@ export default function BondTrendCard() {
     "AAA",
     "AAA",
   ];
+
   const creditSpread = [
-    0.5, 0.9, 0.6, 0.6, 0.8, 0.8, 1.1, 0.8, 0.8, 0.5, 0.5, 0.5,
+    {
+      name: "Credit Spread",
+      data: [0.5, 0.9, 0.6, 0.6, 0.8, 0.8, 1.1, 0.8, 0.8, 0.5, 0.5, 0.5],
+    },
   ];
+
   const bondPrice = [
-    101.5, 100.25, 101.48, 101.48, 99.5, 99.5, 97.75, 98.25, 98.25, 100.0,
-    100.0, 100.0,
+    {
+      name: "Bond Price",
+      data: [
+        101.5, 100.25, 101.48, 101.48, 99.5, 99.5, 97.75, 98.25, 98.25, 100.0,
+        100.0, 100.0,
+      ],
+    },
   ];
 
-  function GraphSection({ title, summaryValue, dataValue }) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Stack spacing={1}>
-          <LineChart
-            xAxis={[
-              {
-                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-              },
-            ]}
-            series={[
-              {
-                data: dataValue,
-              },
-            ]}
-            width={800}
-            height={400}
-          />
-          <Typography textAlign="center">
-            {title}
-            {" of "}
-            <Typography component="span" fontWeight="bold">
-              {summaryValue}
-            </Typography>
-          </Typography>
-        </Stack>
-      </Box>
-    );
-  }
-
-  function TimeSetting({
-    timeValue,
-    functionHandleValue,
-    timeInput,
-    functionHandleInput,
-  }) {
-    const optionTime = [
-      "Today",
-      "Last 7 days",
-      "Last 1 month",
-      "Last 6 months",
-      "Last 1 year",
-      "Last 3 years",
-    ];
-
-    return (
-      <Autocomplete
-        id="time-option"
-        size="small"
-        value={timeValue}
-        onChange={(event, newTime) => {
-          functionHandleValue(newTime);
-        }}
-        inputValue={timeInput}
-        onInputChange={(event, newInputTime) => {
-          functionHandleInput(newInputTime);
-        }}
-        options={optionTime}
-        sx={{
-          width: 180,
-        }}
-        renderInput={(params) => (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              textAlign: "center",
-            }}
-          >
-            <TextField size="small" variant="outlined" {...params} />
-          </Box>
-        )}
-      />
-    );
-  }
+  const time_period = [
+    "Today",
+    "This Week",
+    "This Month",
+    "This Year",
+    "2 Years",
+    "5 Years",
+    "10 Years",
+  ];
 
   return (
-    <Stack spacing={2}>
-      <Typography variant="h6"> Bond Trend </Typography>
+    <Card>
+      <CardHeader
+        action={
+          <TextField
+            select
+            defaultValue={"Today"}
+            size="small"
+            variant="standard"
+          >
+            {time_period.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+        }
+        title="Bond Trend"
+      />
 
-      {/* <Stack spacing={1}>
-            <Typography variant="body2">
-              Average Credit Rating History
-            </Typography>
-            <GraphSection
-              title="Average rating"
-              summaryValue={averageRating}
-              dataValue={bondCreditRating}
+      <CardContent>
+        <Stack spacing={4}>
+          <Stack spacing={1}>
+            <Typography>Average Credit Spread History</Typography>
+
+            <Chart
+              height={350}
+              series={creditSpread}
+              options={useChartOptions("%")}
+              type="area"
+              width="100%"
             />
-          </Stack> */}
+          </Stack>
 
-      <Stack spacing={1}>
-        <Stack direction="row" spacing="auto" sx={{ alignItems: "center" }}>
-          <Typography variant="body1">Average Credit Spread History</Typography>
-          <TimeSetting
-            timeValue={chosenTimeRatingSpread}
-            functionHandleValue={(newValue) =>
-              setChosenTimeRatingSpread(newValue)
-            }
-            timeInput={inputTimeRatingSpread}
-            functionHandleInput={(newInput) =>
-              setInputTimeRatingSpread(newInput)
-            }
-          />
-        </Stack>
-        <GraphSection
-          title="Average spread"
-          summaryValue={averageSpread}
-          dataValue={creditSpread}
-        />
-      </Stack>
+          <Stack spacing={1}>
+            <Typography>Average Price History</Typography>
 
-      <Stack spacing={1}>
-        <Stack direction="row" spacing="auto" sx={{ alignItems: "center" }}>
-          <Typography variant="body1">Average Price History</Typography>
-          <TimeSetting
-            timeValue={chosenTimeRatingPrice}
-            functionHandleValue={(newValue) =>
-              setChosenTimeRatingPrice(newValue)
-            }
-            timeInput={inputTimeRatingPrice}
-            functionHandleInput={(newInput) =>
-              setInputTimeRatingPrice(newInput)
-            }
-          />
+            <Chart
+              height={350}
+              series={bondPrice}
+              options={useChartOptions("bp")}
+              //options={useChartOptions("Price", bondPrice)}
+              type="area"
+              width="100%"
+            />
+          </Stack>
         </Stack>
-        <GraphSection
-          title="Average price"
-          summaryValue={averagePrice}
-          dataValue={bondPrice}
-        />
-      </Stack>
-    </Stack>
+      </CardContent>
+    </Card>
   );
 }

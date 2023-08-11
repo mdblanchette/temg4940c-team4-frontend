@@ -5,6 +5,7 @@ import WorldCredit from "../components/MainPage/WorldCredit";
 import MacroeconomicIndicators from "../components/MainPage/MacroeconomicIndicators";
 import BondInfoColumn from "../components/BondScreener/BondInfoColumn";
 import { useState } from "react";
+import BondInfoTable from "../components/BondScreener/BondInfoTable";
 
 const Page = () => {
   const [selectedCountry, setSelectedCountry] = useState("Global");
@@ -34,7 +35,7 @@ const Page = () => {
             <WorldCredit selectedCountry={selectedCountry} />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <BondInfoColumn />
+            <BondInfoTable />
           </Grid>
         </Grid>
       </Container>
