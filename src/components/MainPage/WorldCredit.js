@@ -18,10 +18,11 @@ const time_period = [
   "10 Years",
 ];
 
-export default function WorldCredit() {
+export default function WorldCredit({ selectedCountry }) {
   return (
     <Card sx={{ height: "100%" }}>
       <CardHeader
+        sx={{ paddingBottom: 0 }}
         action={
           <TextField
             select
@@ -39,10 +40,10 @@ export default function WorldCredit() {
         title="Credit Analytics"
       />
       <CardContent>
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           <Grid item xs={6}>
             <Typography>Country</Typography>
-            <Typography variant="h5">GLOBAL</Typography>
+            <Typography variant="h5">{selectedCountry}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Credit Rating Migration</Typography>

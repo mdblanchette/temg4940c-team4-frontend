@@ -16,14 +16,17 @@
     "@testing-library/user-event": "^13.5.0",
     "apexcharts": "^3.41.1",
     "date-fns": "^2.30.0",
+    "disable-scroll": "^0.6.0",
+    "next": "^13.4.13",
     "dayjs": "^1.11.9",
-    "next": "^13.4.12",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
     "react-day-picker": "^8.8.0",
     "react-dom": "^18.2.0",
     "react-simple-maps": "^3.0.0",
+    "react-svg-pan-zoom": "^3.12.1",
     "react-svg-worldmap": "^2.0.0-alpha.16",
+    "svg-pan-zoom": "^3.6.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
