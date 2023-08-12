@@ -24,6 +24,15 @@ import BondTrendCard from "./BondTrend";
 export default function MultiResultCard() {
   const [openSetting, setOpenSetting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchFilter, setSearchFilter] = useState({
+    Issuer: ["All"],
+    Rating: ["All"],
+    Country: ["All"],
+  });
+
+  function handleSearch(newSearchFilter) {
+    setSearchFilter(newSearchFilter);
+  }
 
   function handleSearchInput(event) {
     setSearchTerm(event.target.value);
@@ -70,7 +79,7 @@ export default function MultiResultCard() {
                   title="Advanced Search"
                 />
                 <CardContent>
-                  <AdvancedSetting />
+                  <AdvancedSetting handleUpdate={handleSearch} />
                 </CardContent>
               </Card>
               {/* </DialogContent> */}
@@ -99,7 +108,7 @@ export default function MultiResultCard() {
             </IconButton> */}
           </Stack>
 
-          <BondInfoTable />
+          <BondInfoTable searchFilter={searchFilter} />
           <BondPredictionCard />
           <BondTrendCard />
         </Stack>
