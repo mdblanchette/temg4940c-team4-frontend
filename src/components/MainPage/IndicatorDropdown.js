@@ -1,25 +1,26 @@
 import { Autocomplete, TextField } from "@mui/material";
 
 const indicators = [
-  "GDP Growth Rate",
-  "Interest Rate",
-  "Inflation Rate",
-  "Unemployment Rate",
-  "Government Debt to GDP",
+  "Corporate Income Tax Rate",
+  "Current Account Balance",
+  "GDP Per Capita",
   "Government Spending",
-  "Balance of Trade",
-  "Current Account to GDP",
-  "Credit Rating",
-  "Corporate Tax Rate",
+  "Short Term Interest Rate",
+  "Unemployment Rate",
 ];
 
 export default function IndicatorDropdown(props) {
   return (
     <Autocomplete
+      disabled={props.disabled}
       options={indicators}
       renderInput={(params) => <TextField {...params} label={props.label} />}
       sx={{ width: "100%", marginRight: "16px" }}
       defaultValue={props.defaultValue}
+      onChange={(e, option) => {
+        if (option) props.setIndicator(option);
+      }}
+      disableClearable
     />
   );
 }

@@ -1,16 +1,14 @@
 import { Chart } from "../MainPage/chart";
 
-export default function MacroChart() {
-  const time_period = [
-    "Today",
-    "This Week",
-    "This Month",
-    "This Year",
-    "2 Years",
-    "5 Years",
-    "10 Years",
-  ];
-
+export default function MacroChart({
+  selectedCountry,
+  indicatorA,
+  indicatorB,
+  indicatorA_Data,
+  indicatorB_Data,
+  timeframe,
+  getMacroData,
+}) {
   const chartOptions = {
     chart: {
       height: 300,
@@ -23,12 +21,12 @@ export default function MacroChart() {
     colors: ["#FF1654", "#247BA0"],
     series: [
       {
-        name: "Series A",
-        data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6],
+        name: "A: " + indicatorA,
+        data: selectedCountry === "Global" ? [] : indicatorA_Data,
       },
       {
-        name: "Series B",
-        data: [20, 29, 37, 36, 44, 45, 50, 58],
+        name: "B: " + indicatorB,
+        data: selectedCountry === "Global" ? [] : indicatorB_Data,
       },
     ],
     stroke: {
@@ -40,10 +38,11 @@ export default function MacroChart() {
       },
     },
     xaxis: {
-      categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+      categories: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
     },
     yaxis: [
       {
+        logBase: 10,
         axisTicks: {
           show: true,
         },
@@ -57,13 +56,14 @@ export default function MacroChart() {
           },
         },
         title: {
-          text: "Series A",
+          text: "",
           style: {
             color: "#FF1654",
           },
         },
       },
       {
+        logBase: 10,
         opposite: true,
         axisTicks: {
           show: true,
@@ -78,7 +78,7 @@ export default function MacroChart() {
           },
         },
         title: {
-          text: "Series B",
+          text: "",
           style: {
             color: "#247BA0",
           },
@@ -103,7 +103,8 @@ export default function MacroChart() {
       options={chartOptions}
       series={chartOptions.series}
       type="line"
-      height={300}
+      height={200}
+      width={"100%"}
     />
   );
 }
