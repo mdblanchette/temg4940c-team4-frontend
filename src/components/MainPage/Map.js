@@ -21,46 +21,14 @@ const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const mapWidth = 800;
 const mapHeight = 400;
 
-export default function Map({ selectedCountry, setSelectedCountry }) {
+export default function Map({
+  oecdCountries,
+  selectedCountry,
+  selectedCountryCode,
+  setSelectedCountry,
+  setSelectedCountryCode,
+}) {
   const [position, setPosition] = useState({ center: [0, 20], zoom: 1 });
-  const oecdCountries = [
-    { flag: "🇦🇺", name: "Australia", code: "AUS" },
-    { flag: "🇦🇹", name: "Austria", code: "AUT" },
-    { flag: "🇧🇪", name: "Belgium", code: "BEL" },
-    { flag: "🇨🇦", name: "Canada", code: "CAN" },
-    { flag: "🇨🇱", name: "Chile", code: "CHL" },
-    { flag: "🇨🇿", name: "Czechia", code: "CZE" },
-    { flag: "🇩🇰", name: "Denmark", code: "DNK" },
-    { flag: "🇪🇪", name: "Estonia", code: "EST" },
-    { flag: "🇫🇮", name: "Finland", code: "FIN" },
-    { flag: "🇫🇷", name: "France", code: "FRA" },
-    { flag: "🇩🇪", name: "Germany", code: "DEU" },
-    { flag: "🇬🇷", name: "Greece", code: "GRC" },
-    { flag: "🇭🇺", name: "Hungary", code: "HUN" },
-    { flag: "🇮🇸", name: "Iceland", code: "ISL" },
-    { flag: "🇮🇪", name: "Ireland", code: "IRL" },
-    { flag: "🇮🇱", name: "Israel", code: "ISR" },
-    { flag: "🇮🇹", name: "Italy", code: "ITA" },
-    { flag: "🇯🇵", name: "Japan", code: "JPN" },
-    { flag: "🇰🇷", name: "Korea", code: "KOR" },
-    { flag: "🇱🇻", name: "Latvia", code: "LVA" },
-    { flag: "🇱🇹", name: "Lithuania", code: "LTU" },
-    { flag: "🇱🇺", name: "Luxembourg", code: "LUX" },
-    { flag: "🇲🇽", name: "Mexico", code: "MEX" },
-    { flag: "🇳🇱", name: "Netherlands", code: "NLD" },
-    { flag: "🇳🇿", name: "New Zealand", code: "NZL" },
-    { flag: "🇳🇴", name: "Norway", code: "NOR" },
-    { flag: "🇵🇱", name: "Poland", code: "POL" },
-    { flag: "🇵🇹", name: "Portugal", code: "PRT" },
-    { flag: "🇸🇰", name: "Slovakia", code: "SVK" },
-    { flag: "🇸🇮", name: "Slovenia", code: "SVN" },
-    { flag: "🇪🇸", name: "Spain", code: "ESP" },
-    { flag: "🇸🇪", name: "Sweden", code: "SWE" },
-    { flag: "🇨🇭", name: "Switzerland", code: "CHE" },
-    { flag: "🇹🇷", name: "Turkey", code: "TUR" },
-    { flag: "🇬🇧", name: "United Kingdom", code: "GBR" },
-    { flag: "🇺🇸", name: "United States of America", code: "USA" },
-  ];
 
   function handleZoomIn() {
     if (position.zoom >= 4) setPosition((pos) => ({ ...pos, zoom: 4 }));
@@ -83,9 +51,12 @@ export default function Map({ selectedCountry, setSelectedCountry }) {
   function renderCountry(countryName) {
     // If country is an OECD country, setSelectedCountry to country name
     if (isOECD(countryName)) {
-      setSelectedCountry(countryName);
+      const oecdCountry = oecdCountries.find((c) => c.name === countryName);
+      setSelectedCountryCode(oecdCountry.code);
+      setSelectedCountry(oecdCountry.name);
     } else if (countryName === "Global") {
       setSelectedCountry("Global");
+      setSelectedCountryCode("Global");
     }
   }
 

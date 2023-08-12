@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useState, useEffect } from "react";
 
 const time_period = [
   "Today",
@@ -18,27 +19,33 @@ const time_period = [
   "10 Years",
 ];
 
-export default function WorldCredit({ selectedCountry }) {
+export default function WorldCredit({ selectedCountry, selectedCountryCode }) {
+  const [sovereignRating, setSovereignRating] = useState("");
+  const [averageIssuerRating, setAverageIssuerRating] = useState("");
+
+  async function getCreditData(selectedCountryCode) {
+    const fetch_link =
+      "http://localhost:3500/macro/creditRating" + "/" + selectedCountryCode;
+    console.log(fetch_link);
+    const res = await fetch(fetch_link);
+    const parsed_res = await res.json();
+    return parsed_res;
+  }
+
+  const renderCreditData = async (selectedCountryCode) => {
+    const data = await getCreditData(selectedCountryCode);
+
+    setSovereignRating(data["Moodys"]);
+    setAverageIssuerRating(data["Average Issuer Rating"]);
+  };
+
+  useEffect(() => {
+    renderCreditData(selectedCountryCode);
+  }, [selectedCountryCode]);
+
   return (
     <Card sx={{ height: "100%" }}>
-      <CardHeader
-        sx={{ paddingBottom: 0 }}
-        action={
-          <TextField
-            select
-            defaultValue={"Today"}
-            size="small"
-            variant="standard"
-          >
-            {time_period.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        }
-        title="Credit Analytics"
-      />
+      <CardHeader sx={{ paddingBottom: 0 }} title="Credit Analytics" />
       <CardContent>
         <Grid container spacing={1}>
           <Grid item xs={6}>
@@ -53,7 +60,7 @@ export default function WorldCredit({ selectedCountry }) {
           </Grid>
           <Grid item xs={6}>
             <Typography>Sovereign Rating</Typography>
-            <Typography variant="h5">AAA</Typography>
+            <Typography variant="h5">{sovereignRating}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Predicted Spread Change</Typography>
@@ -63,11 +70,11 @@ export default function WorldCredit({ selectedCountry }) {
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Issuer Rating</Typography>
-            <Typography variant="h5">AAA</Typography>
+            <Typography variant="h5">{averageIssuerRating}</Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Prediction Confidence Level</Typography>
-            <Typography variant="h5">74.3%</Typography>
+            <Typography variant="h5">%</Typography>
           </Grid>
         </Grid>
       </CardContent>
