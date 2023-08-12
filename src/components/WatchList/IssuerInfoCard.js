@@ -1,10 +1,8 @@
 import React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
-import ReactApexChart from 'react-apexcharts';
 import dynamic from 'next/dynamic';
 
-const DynamicChart = dynamic(() => import('react-apexcharts'), { ssr: false });
-
+const DynamicReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const basicInfoData = {
   stockTicker: 'ABC',
@@ -125,7 +123,7 @@ export default function IssuerInfoCard() {
                 Feature Importance
               </Typography>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <ReactApexChart options={chartOptions} series={featureImportanceData.map(item => item.importance)} type="donut" width={300} />
+                <DynamicReactApexChart options={chartOptions} series={featureImportanceData.map(item => item.importance)} type="donut" width={300} />
               </div>
             </div>
           </Grid>
