@@ -2,6 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/watchlist": "pages/watchlist.js",
-  "/bondscreener": "pages/bondscreener.js"
+  "/": "pages/index.js",
+  "/watchlist": "pages/watchlist.js"
 }

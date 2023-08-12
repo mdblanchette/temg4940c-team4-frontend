@@ -17,9 +17,9 @@ const data = {
 
 export default function PortfolioAllocationCard() {
   return (
-    <Card style={{ width: '100%', marginBottom: 20 }}>
+    <Card style={{ width: '100%',}}>
       <CardHeader title="Portfolio Allocation" />
-      <CardContent>
+      <CardContent style={{ paddingTop: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <DynamicChart options={data.options} series={data.series} type="donut" width={350} />
         </div>

@@ -7,14 +7,22 @@ const DynamicChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export default function PortfolioPerformanceCard() {
-  const dummyTexts = ['Text 1', 'Text 2', 'Text 3', 'Text 4', 'Text 5', 'Text 6'];
-  const dummyValues = [10, 20, 30, 15, 5, 25]; // Dummy values for demonstration
+  // Replace this dummy data with actual API data later
+  const portfolioData = [
+    { label: 'Total Value (USD)', value: "1,000,000" },
+    { label: 'Average Credit Rating', value: "AA" },
+    { label: 'Average Maturity (Years)', value: 7.5 },
+    { label: 'Overall Return', value: "12.5%" },
+    { label: 'Yield to Maturity', value: "6.8%" },
+    { label: 'Total Duration (Years)', value: 5.2 },
+  ];
 
+  // Replace this dummy data with actual API data later
   const donutChartData = [
-    { title: 'Category 1', value: 25 },
-    { title: 'Category 2', value: 35 },
-    { title: 'Category 3', value: 15 },
-    { title: 'Category 4', value: 10 },
+    { title: 'AAA', value: 25 },
+    { title: 'AA', value: 35 },
+    { title: 'A', value: 15 },
+    { title: 'BBB', value: 10 },
   ];
 
   const chartOptions = {
@@ -25,7 +33,7 @@ export default function PortfolioPerformanceCard() {
     colors: COLORS,
     legend: {
       position: 'right',
-      offsetY: -20, // Adjust this value to align the legend with the center
+      offsetY: -20,
       height: 230,
     },
     tooltip: {
@@ -34,23 +42,23 @@ export default function PortfolioPerformanceCard() {
   };
 
   return (
-    <Card style={{ width: '100%', marginBottom: 20 }}>
+    <Card style={{ width: '100%' }}>
       <CardHeader title="Portfolio Performance" style={{ paddingBottom: 0 }} />
-      <CardContent>
+      <CardContent style={{ paddingTop: 10, display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <Grid container spacing={2}>
-          {dummyTexts.map((text, index) => (
+          {portfolioData.map((data, index) => (
             <Grid key={index} item xs={4}>
-              <Typography variant="subtitle1" align="center">
-                {text}
+              <Typography variant="body2" align="center">
+                {data.label}
               </Typography>
               <Typography variant="body1" align="center">
-                {dummyValues[index]}%
+                {data.value}
               </Typography>
             </Grid>
           ))}
         </Grid>
 
-        <Grid container spacing={2} style={{ marginTop: 20 }}>
+        <Grid container spacing={2}>
           <Grid item xs={6}>
             <div style={{ border: '2px solid #ddd', padding: '10px' }}>
               <Typography variant="subtitle1" align="center">
