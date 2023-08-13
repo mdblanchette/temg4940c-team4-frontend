@@ -82,7 +82,7 @@ export default function MacroeconomicIndicators({
     return parsed_res;
   }
 
-  const renderGraphData = async (setIndicator_Data, indicator, timeframe) => {
+  const renderGraphData = async (setIndicator_Data, indicator) => {
     const data = await getMacroData(selectedCountryCode, indicator);
 
     // Check how the data stores its time periods
@@ -90,35 +90,27 @@ export default function MacroeconomicIndicators({
 
     // Get all data from the last 10 years
     let graphData = [];
-
     if (interval === "yearly") {
-      for (let i = current_year - 10; i < current_year; i++) {
-        if (data[i.toString()]) graphData.push(data[i.toString()]);
-        else {
-          graphData.push(0);
-        }
+      for (let i = current_year - 1; i > current_year - 11; i--) {
+        if (data[i.toString()]) graphData.unshift(data[i.toString()]);
       }
     } else if (interval === "quaterly") {
-      // Start from 2023-Q2 and keep going back until you find a value. 2023-Q2 -> 2023-Q1 -> 2022-Q4 -> 2022-Q3 -> ...
+      // Start from 2022-Q4 (we dont want to show any data past 2022 to keep it consistent with yearly data)
       // After finding the latest value, push that value and the 9 values before it into graphData
-      let year = current_year;
-      let quarter = 2;
+      let year = current_year - 1;
+      let quarter = 4;
       let found_latest = false;
       while (year > 0) {
         if (data[year.toString() + "-Q" + quarter.toString()]) {
           if (!found_latest) {
-            graphData.push(data[year.toString() + "-Q" + quarter.toString()]);
+            graphData.unshift(
+              data[year.toString() + "-Q" + quarter.toString()]
+            );
             found_latest = true;
-            if (quarter === 1) {
-              year--;
-              quarter = 4;
-            } else {
-              quarter--;
-            }
           } else {
             // Push the 9 values by year before the latest value into graphData
-            for (let i = year - 1; i > year - 11; i--) {
-              graphData.push(data[i.toString() + "-Q" + quarter.toString()]);
+            for (let i = year - 1; i > year - 10; i--) {
+              graphData.unshift(data[i.toString() + "-Q" + quarter.toString()]);
             }
             break;
           }
@@ -134,8 +126,8 @@ export default function MacroeconomicIndicators({
     } else if (interval === "monthly-num") {
       // Start from 2023-08-01 and keep going back until you find a value. 2023-08-01 -> 2023-07-01 -> 2023-06-01 -> ... -> 2023-01-01 -> 2022-12-01 -> 2022-11-01 -> ...
       // After finding the latest value, push that value and the 9 values before it into graphData
-      let year = current_year;
-      let month = 8;
+      let year = current_year - 1;
+      let month = 12;
       let found_latest = false;
       while (year > 0) {
         if (
@@ -147,7 +139,7 @@ export default function MacroeconomicIndicators({
           ]
         ) {
           if (!found_latest) {
-            graphData.push(
+            graphData.unshift(
               data[
                 year.toString() +
                   "-" +
@@ -163,13 +155,13 @@ export default function MacroeconomicIndicators({
               month--;
             }
           } else {
-            // Push the 9 values by month before the latest value into graphData
-            for (let i = year - 1; i > year - 11; i--) {
-              graphData.push(
+            // Push the 9 values by year before the latest value into graphData
+            for (let i = year - 1; i > year - 10; i--) {
+              graphData.unshift(
                 data[
                   year.toString() +
                     "-" +
-                    (i >= 10 ? i.toString() : "0" + month.toString()) +
+                    (month >= 10 ? month.toString() : "0" + month.toString()) +
                     "-01"
                 ]
               );
@@ -185,8 +177,53 @@ export default function MacroeconomicIndicators({
           }
         }
       }
+    } else {
+      let year = current_year - 1;
+      let month = 12;
+      const monthNames = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sept",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      let found_latest = false;
+      while (year > 0) {
+        if (data[monthNames[month - 1] + "-" + (year % 100)]) {
+          if (!found_latest) {
+            graphData.unshift(data[monthNames[month - 1] + "-" + (year % 100)]);
+            found_latest = true;
+            if (month === 1) {
+              year--;
+              month = 12;
+            } else {
+              month--;
+            }
+          } else {
+            // Push the 9 values by year before the latest value into graphData
+            for (let i = year - 1; i > year - 10; i--) {
+              graphData.unshift(data[monthNames[month] + "-" + (i % 100)]);
+            }
+            break;
+          }
+        } else {
+          if (month === 1) {
+            year--;
+            month = 12;
+          } else {
+            month--;
+          }
+        }
+      }
     }
-
+    console.log(graphData);
     setIndicator_Data(graphData);
   };
 
@@ -207,30 +244,16 @@ export default function MacroeconomicIndicators({
     if (timeframe === "Latest") {
       if (interval === "yearly") {
         latest_country_data = data[(current_year - 1).toString()]; // Because current_year is 2023, the latest yearly data will only be 2022
-        prev_country_data = data[(current_year - 2).toString()]; // Because current_year is 2023, the second latest yearly data will only be 2021
       } else if (interval === "quaterly") {
         // For macroData1, Start from 2023-Q2 and keep going back until you find a value. 2023-Q2 -> 2023-Q1 -> 2022-Q4 -> 2022-Q3 -> ...
         // For prevMacroData1, Start from the quarter before macroData1 and keep going back until you find a value. 2023-Q1 -> 2022-Q4 -> 2022-Q3 -> ...
         let year = current_year;
         let quarter = 2;
-        let found_latest = false;
         while (current_year > 0) {
           if (data[year.toString() + "-Q" + quarter.toString()]) {
-            if (!found_latest) {
-              latest_country_data =
-                data[year.toString() + "-Q" + quarter.toString()];
-              found_latest = true;
-              if (quarter === 1) {
-                year--;
-                quarter = 4;
-              } else {
-                quarter--;
-              }
-            } else {
-              prev_country_data =
-                data[year.toString() + "-Q" + quarter.toString()];
-              break;
-            }
+            latest_country_data =
+              data[year.toString() + "-Q" + quarter.toString()];
+            break;
           } else {
             if (quarter === 1) {
               year--;
@@ -245,7 +268,6 @@ export default function MacroeconomicIndicators({
         // For prevMacroData1, Start from the quarter before macroData1 and keep going back until you find a value.
         let year = current_year;
         let month = 8;
-        let found_latest = false;
         while (year > 0) {
           if (
             data[
@@ -255,31 +277,14 @@ export default function MacroeconomicIndicators({
                 "-01"
             ]
           ) {
-            if (!found_latest) {
-              latest_country_data =
-                data[
-                  year.toString() +
-                    "-" +
-                    (month >= 10 ? month.toString() : "0" + month.toString()) +
-                    "-01"
-                ];
-              found_latest = true;
-              if (month === 1) {
-                year--;
-                month = 12;
-              } else {
-                month--;
-              }
-            } else {
-              prev_country_data =
-                data[
-                  year.toString() +
-                    "-" +
-                    (month >= 10 ? month.toString() : "0" + month.toString()) +
-                    "-01"
-                ];
-              break;
-            }
+            latest_country_data =
+              data[
+                year.toString() +
+                  "-" +
+                  (month >= 10 ? month.toString() : "0" + month.toString()) +
+                  "-01"
+              ];
+            break;
           } else {
             if (month === 1) {
               year--;
@@ -290,7 +295,42 @@ export default function MacroeconomicIndicators({
           }
         }
       } else {
+        console.log("monthly-word");
+        // eg Sep-05, Oct-05, Nov-05...
+        let year = current_year;
+        let month = 8;
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sept",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+
+        while (year > 0) {
+          console.log(data[monthNames[month - 1] + "-" + (year % 100)]);
+          if (data[monthNames[month - 1] + "-" + (year % 100)]) {
+            latest_country_data =
+              data[monthNames[month - 1] + "-" + (year % 100)];
+            break;
+          } else {
+            if (month === 1) {
+              year--;
+              month = 12;
+            } else {
+              month--;
+            }
+          }
+        }
       }
+      prev_country_data = "";
     } else {
       const timeframe_years = parseInt(timeframe.split(" ")[0]);
       if (interval === "yearly") {
@@ -371,6 +411,45 @@ export default function MacroeconomicIndicators({
           }
         }
       } else {
+        // eg Sep-05, Oct-05, Nov-05...
+        let year = current_year;
+        let month = 8;
+        const monthNames = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sept",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+        let found_latest = false;
+        while (year > 0) {
+          if (data[monthNames[month - 1] + "-" + (year % 100)]) {
+            if (!found_latest) {
+              latest_country_data =
+                data[monthNames[month - 1] + "-" + (year % 100)];
+              found_latest = true;
+              year -= timeframe_years;
+            } else {
+              prev_country_data =
+                data[monthNames[month - 1] + "-" + (year % 100)];
+              break;
+            }
+          } else {
+            if (month === 1) {
+              year--;
+              month = 12;
+            } else {
+              month--;
+            }
+          }
+        }
       }
     }
     setMacroData(latest_country_data);
@@ -508,14 +587,14 @@ export default function MacroeconomicIndicators({
             />
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <IndicatorDropdown
-                label="IndicatorA"
+                label="Indicator A"
                 defaultValue={indicatorA}
                 setIndicator={setIndicatorA}
                 disabled={selectedCountry === "Global" ? true : false}
                 size="small"
               />
               <IndicatorDropdown
-                label="IndicatorB"
+                label="Indicator B"
                 defaultValue={indicatorB}
                 setIndicator={setIndicatorB}
                 disabled={selectedCountry === "Global" ? true : false}
