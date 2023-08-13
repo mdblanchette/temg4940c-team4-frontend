@@ -30,19 +30,14 @@ export default function MacroChart({
       },
     ],
     stroke: {
-      width: [4, 4],
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: "20%",
-      },
+      width: [3, 3],
     },
     xaxis: {
       categories: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
     },
     yaxis: [
       {
-        logBase: 10,
+        seriesName: indicatorA,
         axisTicks: {
           show: true,
         },
@@ -54,16 +49,14 @@ export default function MacroChart({
           style: {
             colors: "#FF1654",
           },
-        },
-        title: {
-          text: "",
-          style: {
-            color: "#FF1654",
+          formatter: function (val) {
+            if (val) return val.toFixed(0);
+            else return;
           },
         },
       },
       {
-        logBase: 10,
+        seriesName: indicatorB,
         opposite: true,
         axisTicks: {
           show: true,
@@ -76,20 +69,19 @@ export default function MacroChart({
           style: {
             colors: "#247BA0",
           },
-        },
-        title: {
-          text: "",
-          style: {
-            color: "#247BA0",
+          formatter: function (val) {
+            if (val) return val.toFixed(0);
+            else return;
           },
         },
       },
     ],
     tooltip: {
-      shared: false,
-      intersect: true,
-      x: {
-        show: false,
+      fixed: {
+        enabled: true,
+        position: "topCenter",
+        offsetX: 0,
+        offsetY: -80,
       },
     },
     legend: {
@@ -103,7 +95,7 @@ export default function MacroChart({
       options={chartOptions}
       series={chartOptions.series}
       type="line"
-      height={200}
+      height={250}
       width={"100%"}
     />
   );
