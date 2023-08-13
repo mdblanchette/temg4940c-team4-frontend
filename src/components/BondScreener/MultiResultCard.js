@@ -1,6 +1,7 @@
 import {
   Card,
   CardContent,
+  CardHeader,
   Button,
   Stack,
   Dialog,
@@ -17,6 +18,8 @@ import { CloseOutlined, Search } from "@mui/icons-material";
 import BondInfoColumn from "./BondInfoColumn";
 import BondPredictionCard from "./BondPredictionCard";
 import AdvancedSetting from "./AdvancedSearchSetting";
+import BondInfoTable from "./BondInfoTable";
+import BondTrendCard from "./BondTrend";
 
 export default function MultiResultCard() {
   const [openSetting, setOpenSetting] = useState(false);
@@ -58,21 +61,16 @@ export default function MultiResultCard() {
             >
               {/* <DialogContent style={{ width: "80vw" }}> */}
               <Card>
+                <CardHeader
+                  action={
+                    <IconButton onClick={handleCloseSetting}>
+                      <CloseOutlined />
+                    </IconButton>
+                  }
+                  title="Advanced Search"
+                />
                 <CardContent>
-                  <Stack spacing={1}>
-                    <Stack
-                      direction="row"
-                      spacing="auto"
-                      sx={{ alignItems: "center" }}
-                    >
-                      <Typography variant="body1">Advanced Search</Typography>
-                      <IconButton onClick={handleCloseSetting}>
-                        <CloseOutlined />
-                      </IconButton>
-                    </Stack>
-
-                    <AdvancedSetting />
-                  </Stack>
+                  <AdvancedSetting />
                 </CardContent>
               </Card>
               {/* </DialogContent> */}
@@ -101,8 +99,9 @@ export default function MultiResultCard() {
             </IconButton> */}
           </Stack>
 
-          <BondInfoColumn />
+          <BondInfoTable />
           <BondPredictionCard />
+          <BondTrendCard />
         </Stack>
       </CardContent>
     </Card>

@@ -1,134 +1,110 @@
-import React, { Component } from "react";
-import { ThemeProvider, createTheme, alpha } from "@mui/material/styles";
-import Chart from "./chart";
-const theme = createTheme();
+import { Chart } from "../MainPage/chart";
 
-class MacroChart extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      options: {
-        chart: {
-          id: "basic-bar",
-        },
-        xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
-        },
+export default function MacroChart({
+  selectedCountry,
+  indicatorA,
+  indicatorB,
+  indicatorA_Data,
+  indicatorB_Data,
+  timeframe,
+  getMacroData,
+}) {
+  const chartOptions = {
+    chart: {
+      height: 300,
+      type: "line",
+      stacked: false,
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    colors: ["#FF1654", "#247BA0"],
+    series: [
+      {
+        name: "A: " + indicatorA,
+        data: selectedCountry === "Global" ? [] : indicatorA_Data,
       },
-      series: [
-        {
-          name: "series-1",
-          data: [30, 40, 45, 50, 49, 60, 70, 91],
+      {
+        name: "B: " + indicatorB,
+        data: selectedCountry === "Global" ? [] : indicatorB_Data,
+      },
+    ],
+    stroke: {
+      width: [4, 4],
+    },
+    plotOptions: {
+      bar: {
+        columnWidth: "20%",
+      },
+    },
+    xaxis: {
+      categories: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
+    },
+    yaxis: [
+      {
+        logBase: 10,
+        axisTicks: {
+          show: true,
         },
-      ],
-      chart: {
-        background: "transparent",
-        stacked: false,
-        toolbar: {
-          show: false,
+        axisBorder: {
+          show: true,
+          color: "#FF1654",
         },
-      },
-      colors: [
-        theme.palette.primary.main,
-        alpha(theme.palette.primary.main, 0.25),
-      ],
-      dataLabels: {
-        enabled: false,
-      },
-      fill: {
-        opacity: 1,
-        type: "solid",
-      },
-      grid: {
-        borderColor: theme.palette.divider,
-        strokeDashArray: 2,
-        xaxis: {
-          lines: {
-            show: false,
+        labels: {
+          style: {
+            colors: "#FF1654",
           },
         },
-        yaxis: {
-          lines: {
-            show: true,
+        title: {
+          text: "",
+          style: {
+            color: "#FF1654",
           },
         },
       },
-      legend: {
+      {
+        logBase: 10,
+        opposite: true,
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+          color: "#247BA0",
+        },
+        labels: {
+          style: {
+            colors: "#247BA0",
+          },
+        },
+        title: {
+          text: "",
+          style: {
+            color: "#247BA0",
+          },
+        },
+      },
+    ],
+    tooltip: {
+      shared: false,
+      intersect: true,
+      x: {
         show: false,
       },
-      plotOptions: {
-        bar: {
-          columnWidth: "12px",
-        },
-      },
-      stroke: {
-        colors: ["transparent"],
-        show: true,
-        width: 2,
-      },
-      theme: {
-        mode: theme.palette.mode,
-      },
-      xaxis: {
-        axisBorder: {
-          color: theme.palette.divider,
-          show: true,
-        },
-        axisTicks: {
-          color: theme.palette.divider,
-          show: true,
-        },
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
-        labels: {
-          offsetY: 5,
-          style: {
-            colors: theme.palette.text.secondary,
-          },
-        },
-      },
-      yaxis: {
-        labels: {
-          formatter: (value) => (value > 0 ? `${value}K` : `${value}`),
-          offsetX: -10,
-          style: {
-            colors: theme.palette.text.secondary,
-          },
-        },
-      },
-    };
-  }
+    },
+    legend: {
+      horizontalAlign: "left",
+      offsetX: 40,
+    },
+  };
 
-  render() {
-    return (
-      <ThemeProvider theme={theme}>
-        <div className="app">
-          <div className="row">
-            <div className="mixed-chart">
-              <Chart
-                options={this.state.options}
-                series={this.state.series}
-                type={this.props.type}
-                width="100%"
-              />
-            </div>
-          </div>
-        </div>
-      </ThemeProvider>
-    );
-  }
+  return (
+    <Chart
+      options={chartOptions}
+      series={chartOptions.series}
+      type="line"
+      height={200}
+      width={"100%"}
+    />
+  );
 }
-
-export default MacroChart;
