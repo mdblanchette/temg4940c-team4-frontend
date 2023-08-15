@@ -6,8 +6,6 @@ export default function MacroChart({
   indicatorB,
   indicatorA_Data,
   indicatorB_Data,
-  timeframe,
-  getMacroData,
 }) {
   const chartOptions = {
     chart: {

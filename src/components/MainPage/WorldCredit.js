@@ -1,12 +1,4 @@
-import {
-  Grid,
-  Card,
-  CardContent,
-  CardHeader,
-  MenuItem,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Grid, Card, CardContent, CardHeader, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 
 const time_period = [
@@ -19,9 +11,15 @@ const time_period = [
   "10 Years",
 ];
 
-export default function WorldCredit({ selectedCountry, selectedCountryCode }) {
+export default function WorldCredit({
+  oecdCountries,
+  selectedCountry,
+  selectedCountryCode,
+  selectedCountryFlag,
+}) {
   const [sovereignRating, setSovereignRating] = useState("");
   const [averageIssuerRating, setAverageIssuerRating] = useState("");
+  const [countryFlag, setCountryFlag] = useState("");
 
   async function getCreditData(selectedCountryCode) {
     const fetch_link =
@@ -50,7 +48,9 @@ export default function WorldCredit({ selectedCountry, selectedCountryCode }) {
         <Grid container spacing={1}>
           <Grid item xs={6}>
             <Typography>Country</Typography>
-            <Typography variant="h5">{selectedCountry}</Typography>
+            <Typography variant="h5">
+              {selectedCountryFlag + " " + selectedCountryCode}
+            </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Credit Rating Migration</Typography>
@@ -60,7 +60,9 @@ export default function WorldCredit({ selectedCountry, selectedCountryCode }) {
           </Grid>
           <Grid item xs={6}>
             <Typography>Sovereign Rating</Typography>
-            <Typography variant="h5">{sovereignRating}</Typography>
+            <Typography variant="h5">
+              {sovereignRating.replace(/\s/g, "")}
+            </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Predicted Spread Change</Typography>

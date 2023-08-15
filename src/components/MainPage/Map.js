@@ -16,6 +16,8 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import { useState } from "react";
+import { sl } from "date-fns/locale";
+import { set } from "date-fns";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const mapWidth = 800;
@@ -27,8 +29,10 @@ export default function Map({
   selectedCountryCode,
   setSelectedCountry,
   setSelectedCountryCode,
+  setSelectedCountryFlag,
 }) {
   const [position, setPosition] = useState({ center: [0, 20], zoom: 1 });
+  const [inputValue, setInputValue] = useState("");
 
   function handleZoomIn() {
     if (position.zoom >= 4) setPosition((pos) => ({ ...pos, zoom: 4 }));
@@ -54,9 +58,13 @@ export default function Map({
       const oecdCountry = oecdCountries.find((c) => c.name === countryName);
       setSelectedCountryCode(oecdCountry.code);
       setSelectedCountry(oecdCountry.name);
+      setSelectedCountryFlag(oecdCountry.flag);
+      setInputValue(oecdCountry.flag + " " + countryName);
     } else if (countryName === "Global") {
       setSelectedCountry("Global");
       setSelectedCountryCode("Global");
+      setSelectedCountryFlag("");
+      setInputValue("");
     }
   }
 
@@ -132,6 +140,10 @@ export default function Map({
               onChange={(e, option) => {
                 if (option) renderCountry(option.name);
               }}
+              onInputChange={(e, newInputValue) => {
+                // Update the input value as the user types
+                setInputValue(newInputValue);
+              }}
               renderOption={(props, option) => (
                 <Box
                   component="li"
@@ -152,6 +164,7 @@ export default function Map({
                     inputProps={{
                       ...params.inputProps,
                       autoComplete: "new-password",
+                      value: inputValue,
                     }}
                     sx={{
                       width: 200,
