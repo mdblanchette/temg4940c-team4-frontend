@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, Select, MenuItem, InputBase, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 
 const dummyTableData = {
   0: [
-    { id: 1, name: 'Item 1', issuer: 'Issuer A', rating: 'A', migration: 'XX' },
-    { id: 2, name: 'Item 2', issuer: 'Issuer B', rating: 'B', migration: 'XX' },
-    { id: 3, name: 'Item 3', issuer: 'Issuer C', rating: 'C', migration: 'XX' },
-    { id: 4, name: 'Item 4', issuer: 'Issuer D', rating: 'C', migration: 'XX' },
+    { id: 1, name: 'Item 1', issuer: 'Issuer A', rating: 'A', migration: 'XX', allocation: 25 },
+    { id: 2, name: 'Item 2', issuer: 'Issuer B', rating: 'B', migration: 'XX', allocation: 15 },
+    { id: 3, name: 'Item 3', issuer: 'Issuer C', rating: 'C', migration: 'XX', allocation: 30 },
+    { id: 4, name: 'Item 4', issuer: 'Issuer D', rating: 'C', migration: 'XX', allocation: 10 },
   ],
   1: [
-    { id: 5, name: 'Item 5', issuer: 'Issuer E', rating: 'C', migration: 'XX' },
-    { id: 6, name: 'Item 6', issuer: 'Issuer C', rating: 'A', migration: 'XX' },
+    { id: 5, name: 'Item 5', issuer: 'Issuer E', rating: 'C', migration: 'XX', allocation: 18 },
+    { id: 6, name: 'Item 6', issuer: 'Issuer C', rating: 'A', migration: 'XX', allocation: 27 },
     // Add more data as needed for Portfolio 2
   ],
   2: [
-    { id: 7, name: 'Item 7', issuer: 'Issuer F', rating: 'A', migration: 'XX' },
+    { id: 7, name: 'Item 7', issuer: 'Issuer F', rating: 'A', migration: 'XX', allocation: 40 },
     // Add more data as needed for Portfolio 3
   ],
 };
 
 
-export default function WatchlistSideBar({ selectedRow, onRowClick, onPortfolioChange, onPortfolioSelect }) {
+
+export default function WatchlistSideBar({ selectedRow, onRowClick, onPortfolioChange }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPortfolio, setSelectedPortfolio] = useState(0);
+  const [selectedPortfolioItems, setSelectedPortfolioItems] = useState([]);
 
   const filteredTableData = dummyTableData[selectedPortfolio].filter(row => {
     const lowerSearchQuery = searchQuery.toLowerCase();
@@ -35,10 +37,12 @@ export default function WatchlistSideBar({ selectedRow, onRowClick, onPortfolioC
       row.migration.toLowerCase().includes(lowerSearchQuery)
     );
   });
-
+  
   const handlePortfolioSelect = (event) => {
     const selectedValue = event.target.value;
-    setSelectedPortfolio(selectedValue); // Update the selected portfolio
+    setSelectedPortfolio(selectedValue);
+    const selectedPortfolioItems = dummyTableData[selectedValue];
+    setSelectedPortfolioItems(selectedPortfolioItems);
   };
 
   return (

@@ -16,6 +16,7 @@ const data = {
 };
 
 export default function PortfolioAllocationCard() {
+  
   return (
     <Card style={{ width: '100%'}}>
       <CardHeader title="Portfolio Allocation" />
