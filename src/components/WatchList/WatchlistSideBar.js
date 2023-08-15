@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, Select, MenuItem, InputBase, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import PortfolioAllocationCard from './PortfolioAllocationCard';
+
 const dummyTableData = {
   0: [
     { id: 1, name: 'Item 1', issuer: 'Issuer A', rating: 'A', migration: 'XX' },
@@ -21,6 +21,7 @@ const dummyTableData = {
   ],
 };
 
+
 export default function WatchlistSideBar({ selectedRow, onRowClick, onPortfolioChange, onPortfolioSelect }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedPortfolio, setSelectedPortfolio] = useState(0);
@@ -35,22 +36,13 @@ export default function WatchlistSideBar({ selectedRow, onRowClick, onPortfolioC
     );
   });
 
-  const [selectedPortfolioId, setSelectedPortfolioId] = useState(0);
-  
   const handlePortfolioSelect = (event) => {
     const selectedValue = event.target.value;
-    setSelectedPortfolioId(selectedValue); // Update the selected portfolio ID
-  
-    // Pass the selected portfolio data to the parent component
-    onPortfolioSelect(dummyTableData[selectedValue].allocations);
-  };
-
-  const handlePortfolioChange = (selectedValue) => {
-    setSelectedPortfolio(selectedValue);
+    setSelectedPortfolio(selectedValue); // Update the selected portfolio
   };
 
   return (
-    <Card style={{ width: '400px', height: '100%', }}>
+    <Card style={{ width: '400px', height: '100%' }}>
       <CardContent style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
           <Select variant="outlined" fullWidth style={{ height: '30px', marginRight: '10px' }} value={selectedPortfolio} onChange={handlePortfolioSelect}>
@@ -112,7 +104,6 @@ export default function WatchlistSideBar({ selectedRow, onRowClick, onPortfolioC
             </TableBody>
           </Table>
         </TableContainer>
-        <PortfolioAllocationCard selectedPortfolioId={selectedPortfolioId} />
       </CardContent>
     </Card>
   );
