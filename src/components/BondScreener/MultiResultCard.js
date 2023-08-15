@@ -20,6 +20,7 @@ import BondPredictionCard from "./BondPredictionCard";
 import AdvancedSetting from "./AdvancedSearchSetting";
 import BondInfoTable from "./BondInfoTable";
 import BondTrendCard from "./BondTrend";
+import dayjs from "dayjs";
 
 export default function MultiResultCard() {
   const [openSetting, setOpenSetting] = useState(false);
@@ -28,17 +29,34 @@ export default function MultiResultCard() {
     Issuer: ["All"],
     Rating: ["All"],
     Country: ["All"],
+    Outstanding: [0, 10],
+    IssueDate: dayjs(),
+    MatureDate: dayjs(),
+    Maturity: 30,
+    CouponRate: [0, 100],
+  });
+  const [predictionData, setPredictionData] = useState({
+    ratingMigration: 20.1,
+    targetRating: "",
+    spreadChange: 100,
+    priceCorrelation: 15.7,
   });
 
   function handleSearch(newSearchFilter) {
     setSearchFilter(newSearchFilter);
+    console.log("updated filter: ", searchFilter);
+  }
+
+  function handlePrediction(newPredictedData) {
+    setPredictionData(newPredictedData);
   }
 
   function handleSearchInput(event) {
     setSearchTerm(event.target.value);
   }
-  function handleCloseSetting() {
-    setOpenSetting(false);
+
+  function handleCloseSetting(state) {
+    setOpenSetting(state);
   }
 
   return (
@@ -64,7 +82,7 @@ export default function MultiResultCard() {
 
             <Dialog
               open={openSetting}
-              close={handleCloseSetting}
+              close={() => setOpenSetting(false)}
               fullWidth
               maxWidth="lg"
             >
@@ -72,14 +90,17 @@ export default function MultiResultCard() {
               <Card>
                 <CardHeader
                   action={
-                    <IconButton onClick={handleCloseSetting}>
+                    <IconButton onClick={() => setOpenSetting(false)}>
                       <CloseOutlined />
                     </IconButton>
                   }
                   title="Advanced Search"
                 />
                 <CardContent>
-                  <AdvancedSetting handleUpdate={handleSearch} />
+                  <AdvancedSetting
+                    handleUpdate={handleSearch}
+                    handleClose={handleCloseSetting}
+                  />
                 </CardContent>
               </Card>
               {/* </DialogContent> */}
@@ -108,8 +129,11 @@ export default function MultiResultCard() {
             </IconButton> */}
           </Stack>
 
-          <BondInfoTable searchFilter={searchFilter} />
-          <BondPredictionCard />
+          <BondInfoTable
+            searchFilter={searchFilter}
+            handlePredictionInfo={handlePrediction}
+          />
+          <BondPredictionCard predictionData={predictionData} />
           <BondTrendCard />
         </Stack>
       </CardContent>

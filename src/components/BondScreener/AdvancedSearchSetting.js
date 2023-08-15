@@ -96,7 +96,14 @@ const AutocompleteChips = ({
   );
 };
 
-function AddColumn({ Title, Options, handleChange, inputValue }) {
+export function AddColumn({
+  Title,
+  Options,
+  handleChange,
+  inputValue,
+  secondOptions,
+  handleSecondOptions,
+}) {
   return (
     <Stack spacing={1} sx={{ width: "100%" }}>
       <Typography>{Title}</Typography>
@@ -126,18 +133,37 @@ function AddColumn({ Title, Options, handleChange, inputValue }) {
             {...params}
             placeholder="Type or choose here"
             variant="outlined"
+            size="small"
           />
         )}
       />
+      {secondOptions && (
+        <FormGroup row>
+          {["Up", "Down", "Stable"].map((item) => (
+            <FormControlLabel
+              key={item} // Add a unique key prop for each item in the map
+              control={
+                <Checkbox
+                  checked={secondOptions.includes(item)}
+                  onChange={(event) =>
+                    handleSecondOptions(item, event.target.checked)
+                  }
+                />
+              }
+              label={item}
+            />
+          ))}
+        </FormGroup>
+      )}
     </Stack>
   );
 }
 
-function SliderColumn({
+export function SliderColumn({
   Title,
   inputValue,
   unit,
-  options,
+  inputOptions,
   handleChange,
   handleOptions,
 }) {
@@ -160,38 +186,22 @@ function SliderColumn({
             {unit}
           </Typography>
 
-          {options && (
+          {inputOptions && (
             <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={options.Up}
-                    onChange={handleOptions}
-                    name="Up"
-                  />
-                }
-                label="Up"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={options.Down}
-                    onChange={handleOptions}
-                    name="Down"
-                  />
-                }
-                label="Down"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={options.Stable}
-                    onChange={handleOptions}
-                    name="Stable"
-                  />
-                }
-                label="Stable"
-              />
+              {["Up", "Down", "Stable"].map((item) => (
+                <FormControlLabel
+                  key={item} // Add a unique key prop for each item in the map
+                  control={
+                    <Checkbox
+                      checked={inputOptions.includes(item)}
+                      onChange={(event) =>
+                        handleOptions(item, event.target.checked)
+                      }
+                    />
+                  }
+                  label={item}
+                />
+              ))}
             </FormGroup>
           )}
         </Stack>
@@ -200,7 +210,11 @@ function SliderColumn({
   );
 }
 
-export default function AdvancedSetting({ searchFilter, handleUpdate }) {
+export default function AdvancedSetting({
+  searchFilter,
+  handleUpdate,
+  handleClose,
+}) {
   const creditRatings = [
     "All",
     "Aaa",
@@ -292,27 +306,25 @@ export default function AdvancedSetting({ searchFilter, handleUpdate }) {
 
   // state of variables shown on the Advanced Search card
   const [rateMigration, setRateMigration] = useState([0, 100]);
-  const [changeSpread, setChangeSpread] = useState([10, 150]);
-  const [liquidity, setLiquidity] = useState([3, 5]);
-  const [issueDate, setIssueDate] = useState(dayjs().format());
-  const [matureDate, setMatureDate] = useState(dayjs().format());
+  const [changeSpread, setChangeSpread] = useState([0, 100]);
+  const [liquidity, setLiquidity] = useState([0, 10]);
+  const [issueDate, setIssueDate] = useState(dayjs("1990-01-01").format());
+  const [matureDate, setMatureDate] = useState(dayjs("2050-01-01").format());
   const [maturity, setMaturity] = useState(30);
   const [creditRate, setCreditRate] = useState(["All"]);
   const [country, setCountry] = useState(["All"]);
   const [issuer, setIssuer] = useState(["All"]);
-  const [ratingDirection, setRatingDirection] = useState({
-    Up: true,
-    Down: true,
-    Stable: false,
-  });
-  const [spreadDirection, setSpreadDirection] = useState({
-    Up: true,
-    Down: true,
-    Stable: false,
-  });
+  const [ratingDirection, setRatingDirection] = useState([]);
+  const [spreadDirection, setSpreadDirection] = useState([]);
+  const [finalRating, setFinalRating] = useState(["All"]);
+  const [couponRate, setCouponRate] = useState([0, 100]);
 
   function handleRateMigrationChange(event, newValue) {
     setRateMigration(newValue);
+  }
+
+  function handleCouponRate(event, newValue) {
+    setCouponRate(newValue);
   }
 
   function handleChangeSpread(event, newValue) {
@@ -323,22 +335,35 @@ export default function AdvancedSetting({ searchFilter, handleUpdate }) {
     setLiquidity(newValue);
   }
 
-  const handleRatingDirection = (event) => {
-    const { name, checked } = event.target;
-
-    setRatingDirection((prevState) => ({
-      ...prevState,
-      [name]: checked,
-    }));
+  const handleMigrationDirectionChange = (item, isChecked) => {
+    setRatingDirection((prevItems) => {
+      if (isChecked) {
+        // Item is checked, add it if it doesn't already exist
+        if (!prevItems.includes(item)) {
+          return [...prevItems, item];
+        }
+      } else {
+        // Item is unchecked, remove it if it exists
+        return prevItems.filter((prevItem) => prevItem !== item);
+      }
+      return prevItems;
+    });
   };
 
-  const handleSpreadDirection = (event) => {
-    const { name, checked } = event.target;
+  const handleSpreadDirectionChange = (item, isChecked) => {
+    setSpreadDirection((prevItems) => {
+      if (isChecked) {
+        // Item is checked, add it if it doesn't already exist
+        if (!prevItems.includes(item)) {
+          return [...prevItems, item];
+        }
+      } else {
+        // Item is unchecked, remove it if it exists
+        return prevItems.filter((prevItem) => prevItem !== item);
+      }
 
-    setSpreadDirection((prevState) => ({
-      ...prevState,
-      [name]: checked,
-    }));
+      return prevItems;
+    });
   };
 
   function handleInputChange() {
@@ -346,6 +371,11 @@ export default function AdvancedSetting({ searchFilter, handleUpdate }) {
       Issuer: issuer,
       Rating: creditRate,
       Country: country,
+      Outstanding: liquidity,
+      //IssueDate: dayjs(),
+      //MatureDate: dayjs(),
+      //Maturity: 30,
+      CouponRate: couponRate,
     };
 
     handleUpdate(updatedFilter);
@@ -355,7 +385,7 @@ export default function AdvancedSetting({ searchFilter, handleUpdate }) {
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ThemeProvider theme={ThemeSetting} />
-        <Stack spacing={4}>
+        <Stack spacing={1}>
           <Stack spacing={8} direction="row">
             <AddColumn
               Title="Credit Rating"
@@ -386,60 +416,85 @@ export default function AdvancedSetting({ searchFilter, handleUpdate }) {
             />
           </Stack>
 
-          <Stack spacing={1}>
-            <Stack spacing={8} direction="row">
-              <Stack spacing={1} sx={{ width: "100%" }}>
-                <Typography>Issue Date</Typography>
-                <DatePicker
-                  label="Select date"
-                  maxDate={dayjs(matureDate)}
-                  value={dayjs(issueDate)}
-                  onChange={(date) => setIssueDate(dayjs(date).format())}
-                  renderInput={(props) => <TextField {...props} size="small" />}
-                />
-              </Stack>
-
-              <Stack spacing={2} sx={{ width: "100%" }}>
-                <Typography>Mature Date</Typography>
-                <DatePicker
-                  label="Select date"
-                  minDate={dayjs(issueDate)}
-                  value={dayjs(matureDate)}
-                  onChange={(date) => setMatureDate(dayjs(date).format())}
-                  renderInput={(props) => <TextField {...props} size="small" />}
-                />
-              </Stack>
+          <Stack spacing={8} direction="row">
+            <Stack spacing={1} sx={{ width: "100%" }}>
+              <Typography>Earliest Issue Date</Typography>
+              <DatePicker
+                label="Select date"
+                maxDate={dayjs(matureDate)}
+                value={dayjs(issueDate)}
+                onChange={(date) => setIssueDate(dayjs(date).format())}
+                renderInput={(props) => <TextField {...props} size="small" />}
+              />
             </Stack>
+
+            <Stack spacing={2} sx={{ width: "100%" }}>
+              <Typography>Latest Mature Date</Typography>
+              <DatePicker
+                label="Select date"
+                minDate={dayjs(issueDate)}
+                value={dayjs(matureDate)}
+                onChange={(date) => setMatureDate(dayjs(date).format())}
+                renderInput={(props) => <TextField {...props} size="small" />}
+              />
+            </Stack>
+          </Stack>
+
+          {/* <Stack spacing={1}>
             <Stack spacing={1} direction="row">
               <Typography>Maturity (years): </Typography>
               <Input inputProps={{ type: "number", step: 1, min: 0 }} />
             </Stack>
-          </Stack>
+          </Stack> */}
 
           <Stack spacing={8} direction="row">
             <SliderColumn
-              Title="Predicted Migration Rate"
+              Title="Coupon Rate"
+              inputValue={couponRate}
+              handleChange={handleCouponRate}
+              unit="%"
+            />
+            <SliderColumn
+              Title="Predicted Migration Probability"
               inputValue={rateMigration}
               handleChange={handleRateMigrationChange}
               unit="%"
-              options={ratingDirection}
-              handleOptions={handleRatingDirection}
             />
+          </Stack>
+
+          <Stack spacing={8} direction="row">
+            <AddColumn
+              Title="Predicted Final Rating"
+              Options={creditRatings}
+              inputValue={finalRating}
+              handleChange={(items) => setFinalRating(items)}
+              secondOptions={ratingDirection}
+              handleSecondOptions={handleMigrationDirectionChange}
+            />
+
             <SliderColumn
               Title="Predicted Change in Spread"
               inputValue={changeSpread}
               handleChange={handleChangeSpread}
               unit=" bp"
-              options={spreadDirection}
-              handleOptions={handleSpreadDirection}
+              inputOptions={spreadDirection}
+              handleOptions={handleSpreadDirectionChange}
             />
           </Stack>
 
-          <Stack spacing={2} direction="row" justifyContent="center">
+          <Stack
+            spacing={2}
+            direction="row"
+            justifyContent="center"
+            paddingBottom={2}
+          >
             <Button
               sx={{ minWidth: 100 }}
               variant="contained"
-              onClick={handleInputChange}
+              onClick={() => {
+                handleInputChange();
+                handleClose(false);
+              }}
             >
               Search
             </Button>
