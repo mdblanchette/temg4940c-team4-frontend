@@ -9,11 +9,14 @@ import TopBottomBonds from "../components/MainPage/TopBottomBonds";
 const Page = () => {
   const [selectedCountry, setSelectedCountry] = useState("Global");
   const [selectedCountryCode, setSelectedCountryCode] = useState("Global");
+  const [selectedCountryFlag, setSelectedCountryFlag] = useState("");
+
   const oecdCountries = [
     { flag: "🇦🇺", name: "Australia", code: "AUS" },
     { flag: "🇦🇹", name: "Austria", code: "AUT" },
     { flag: "🇧🇪", name: "Belgium", code: "BEL" },
     { flag: "🇨🇦", name: "Canada", code: "CAN" },
+    { flag: "🇨🇷", name: "Costa Rica", code: "CRI" },
     { flag: "🇨🇱", name: "Chile", code: "CHL" },
     { flag: "🇨🇿", name: "Czechia", code: "CZE" },
     { flag: "🇩🇰", name: "Denmark", code: "DNK" },
@@ -55,29 +58,44 @@ const Page = () => {
         flexGrow: 1,
       }}
     >
-      <Container maxWidth="xl">
-        <Grid container spacing={1}>
-          <Grid item xs={12} sm={6}>
+      <Container
+        maxWidth="xxl"
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+          height: "80vh", // Set the container height to fill the screen
+        }}
+      >
+        <Grid container spacing={1} sx={{ flexGrow: 1 }}>
+          <Grid item xs={12} sm={6} sx={{ flexGrow: 1 }}>
             <Map
               oecdCountries={oecdCountries}
               selectedCountry={selectedCountry}
               setSelectedCountry={setSelectedCountry}
               setSelectedCountryCode={setSelectedCountryCode}
+              setSelectedCountryFlag={setSelectedCountryFlag}
+              sx={{ height: "100%" }} // Set the height of the Map component to fill the card
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TopBottomBonds />
+          <Grid item xs={12} sm={6} sx={{ flexGrow: 1 }}>
+            <TopBottomBonds sx={{ height: "100%" }} />
           </Grid>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={3} sx={{ flexGrow: 1 }}>
+            <WorldCredit
+              oecdCountries={oecdCountries}
+              selectedCountry={selectedCountry}
+              selectedCountryCode={selectedCountryCode}
+              selectedCountryFlag={selectedCountryFlag}
+              sx={{ height: "100%" }} // Set the height of the WorldCredit component to fill the card
+            />
+          </Grid>
+          <Grid item xs={12} sm={9} sx={{ flexGrow: 1 }}>
             <MacroeconomicIndicators
               selectedCountry={selectedCountry}
               selectedCountryCode={selectedCountryCode}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <WorldCredit
-              selectedCountry={selectedCountry}
-              selectedCountryCode={selectedCountryCode}
+              selectedCountryFlag={selectedCountryFlag}
+              sx={{ height: "100%" }} // Set the height of the MacroeconomicIndicators component to fill the card
             />
           </Grid>
         </Grid>

@@ -16,6 +16,7 @@ import { use, useEffect, useState } from "react";
 export default function MacroeconomicIndicators({
   selectedCountry,
   selectedCountryCode,
+  selectedCountryFlag,
 }) {
   const [timeframe, setTimeframe] = useState("Latest");
   const [indicatorA, setIndicatorA] = useState("Corporate Income Tax Rate");
@@ -571,19 +572,17 @@ export default function MacroeconomicIndicators({
             ))}
           </TextField>
         }
-        title="Macroeconomic Indicators"
+        title={selectedCountryFlag + " Macroeconomic Indicators"}
       />
       <CardContent>
         <Grid container spacing={1}>
-          <Grid item xs={5}>
+          <Grid item xs={5.5}>
             <MacroChart
               selectedCountry={selectedCountry}
               indicatorA={indicatorA}
               indicatorB={indicatorB}
               indicatorA_Data={indicatorA_Data}
               indicatorB_Data={indicatorB_Data}
-              timeframe={timeframe}
-              getMacroData={getMacroData}
             />
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <IndicatorDropdown
@@ -602,7 +601,7 @@ export default function MacroeconomicIndicators({
               />
             </Box>
           </Grid>
-          <Grid container xs={7} spacing={2}>
+          <Grid container xs={6.5} spacing={2}>
             <Grid item xs={6}>
               <IndicatorDropdown
                 label="Indicator"

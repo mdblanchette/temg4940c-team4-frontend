@@ -121,7 +121,13 @@ export default function MiniDrawer({ children }) {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
-        <Toolbar>
+        <Toolbar
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -140,11 +146,14 @@ export default function MiniDrawer({ children }) {
             component="div"
             sx={{
               flexGrow: 1,
-              textAlign: "center",
+              display: "flex", // Added this line
+              alignItems: "center", // Added this line
+              justifyContent: "center",
               fontWeight: "bold",
               fontSize: "25px",
             }}
           >
+            <DeblurIcon sx={{ marginRight: "5px", fontSize: "30px" }} />
             COVALENCE
           </Typography>
         </Toolbar>
