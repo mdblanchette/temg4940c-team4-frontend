@@ -54,7 +54,7 @@ export default function IssuerInfoCard() {
   };
 
   return (
-    <Card style={{ width: '100%', marginBottom: 20 }}>
+    <Card style={{ width: '100%'}}>
       <CardContent>
         <Typography variant="h6">Issuer Information</Typography>
         <Grid container spacing={2} style={{ marginTop: '20px' }}>
