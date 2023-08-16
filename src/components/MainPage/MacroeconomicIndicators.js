@@ -224,7 +224,15 @@ export default function MacroeconomicIndicators({
         }
       }
     }
-    console.log(graphData);
+
+    // Convert N/A --> null
+    graphData = graphData.map((data) => {
+      if (data === "N/A") {
+        return null;
+      } else {
+        return data;
+      }
+    });
     setIndicator_Data(graphData);
   };
 
