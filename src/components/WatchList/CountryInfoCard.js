@@ -27,7 +27,7 @@ export default function CountryInfoCard({ selectedRow, oecdCountries }) {
       sovereignRating: "N/A", // SET UP FETCHING WHEN READY
       averageIssuerRating: "N/A", // SET UP FETCHING WHEN READY
     });
-    }
+}
   }, [selectedRow, oecdCountries]);
 
   return (
