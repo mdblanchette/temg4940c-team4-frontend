@@ -1,46 +1,57 @@
-import React from 'react';
-import { Card, CardContent, Typography, Box } from '@mui/material';
-import CountryFlag from 'react-country-flag';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, Typography, Box } from "@mui/material";
 
-export default function CountryInfoCard() {
-  // Placeholder country data
-  const countryData = {
-    name: 'Country A',
-    code: 'US', // ISO 3166-1 alpha-2 country code
-    sovereignRating: 'A',
-    averageIssuerRating: 'B',
-    predictedRatingMigration: +0.2,
-    predictedSpreadChange: -0.1,
-    predictionConfidence: '80%',
-  };
+export default function CountryInfoCard({ selectedRow, oecdCountries }) {
+  const [countryInfo, setCountryInfo] = useState({
+    flag: "",
+    name: "No country information available",
+    sovereignRating: "N/A",
+    averageIssuerRating: "N/A",
+  });
+
+  useEffect(() => {
+    if (!selectedRow) return;
+    const country = oecdCountries.find((c) => c.name === selectedRow.country);
+    if (!country) return;
+
+    setCountryInfo({
+      flag: country.flag,
+      name: country.name,
+      sovereignRating: "N/A", // SET UP FETCHING WHEN READY
+      averageIssuerRating: "N/A", // SET UP FETCHING WHEN READY
+    });
+  }, [selectedRow, oecdCountries]);
 
   return (
-    <Card style={{ width: '100%', marginBottom: 20 }}>
+    <Card style={{ width: "100%", marginBottom: 20 }}>
       <CardContent>
         <Typography variant="h6">Country Information</Typography>
-        <Box style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
-          <div style={{ textAlign: 'center' }}>
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-around",
+            marginTop: "20px",
+            textAlign: "center",
+          }}
+        >
+          <div>
             <Typography variant="body2">Country</Typography>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
-              <CountryFlag countryCode={countryData.code} svg style={{ width: '1.5em', height: '1.5em' }} />
-              <Typography variant="subtitle1" style={{ marginLeft: '5px' }}>{countryData.name}</Typography>
-            </div>
-            <Typography variant="body2">Sovereign Rating</Typography>
-            <Typography variant="subtitle1">{countryData.sovereignRating}</Typography>
-            <Typography variant="body2">Average Issuer Rating</Typography>
-            <Typography variant="subtitle1">{countryData.averageIssuerRating}</Typography>
+            <Typography variant="subtitle1">
+              {countryInfo.flag + " " + countryInfo.name}
+            </Typography>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <Typography variant="body2">Average Predicted Rating Migration</Typography>
-            <Typography variant="subtitle1" style={{ color: countryData.predictedRatingMigration > 0 ? 'green' : 'red', marginBottom: '10px' }}>
-              {countryData.predictedRatingMigration > 0 ? `+${countryData.predictedRatingMigration}` : countryData.predictedRatingMigration}
+          <div>
+            <Typography variant="body2">Sovereign Rating</Typography>
+            <Typography variant="subtitle1">
+              {countryInfo.sovereignRating}
             </Typography>
-            <Typography variant="body2">Average Predicted Spread Change</Typography>
-            <Typography variant="subtitle1" style={{ color: countryData.predictedSpreadChange > 0 ? 'green' : 'red', marginBottom: '10px' }}>
-              {countryData.predictedSpreadChange > 0 ? `+${countryData.predictedSpreadChange}` : countryData.predictedSpreadChange}
+          </div>
+          <div>
+            <Typography variant="body2">Average Issuer Rating</Typography>
+            <Typography variant="subtitle1">
+              {countryInfo.averageIssuerRating}
             </Typography>
-            <Typography variant="body2">Prediction Confidence Level</Typography>
-            <Typography variant="subtitle1">{countryData.predictionConfidence}</Typography>
           </div>
         </Box>
       </CardContent>
