@@ -130,7 +130,9 @@ export default function WatchlistSideBar({
             }}
           >
             {Object.keys(dummyTableData).map((key) => (
-              <MenuItem value={key}>Portfolio {parseInt(key)}</MenuItem>
+              <MenuItem key={key} value={key}>
+                Portfolio {parseInt(key)}
+              </MenuItem>
             ))}
           </Select>
           <IconButton
@@ -210,7 +212,7 @@ export default function WatchlistSideBar({
               {filteredTableData.map((row) => (
                 <TableRow
                   key={row.id}
-                  onClick={() => onRowClick(row.id)}
+                  onClick={() => onRowClick(row)}
                   style={{
                     cursor: "pointer",
                     backgroundColor:

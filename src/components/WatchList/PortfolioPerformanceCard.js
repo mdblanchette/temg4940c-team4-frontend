@@ -106,7 +106,7 @@ export default function PortfolioPerformanceCard({
                   options={maturityChart.options}
                   series={maturityChart.series}
                   type="donut"
-                  width={250}
+                  width={280}
                 />
               </div>
             </div>
