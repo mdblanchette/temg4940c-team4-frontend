@@ -26,7 +26,7 @@ const dummyTableData = {
       bid: "12%",
       ask: "15%",
       netChange: "3%",
-      predictedSpreadMovement: "8%"
+      predictedSpreadMovement: "8%",
     },
     {
       id: 2,
@@ -44,7 +44,7 @@ const dummyTableData = {
       bid: "13%",
       ask: "16%",
       netChange: "4%",
-      predictedSpreadMovement: "7%"
+      predictedSpreadMovement: "7%",
     },
     {
       id: 3,
@@ -62,7 +62,7 @@ const dummyTableData = {
       bid: "14%",
       ask: "17%",
       netChange: "5%",
-      predictedSpreadMovement: "6%"
+      predictedSpreadMovement: "6%",
     },
     {
       id: 4,
@@ -80,7 +80,7 @@ const dummyTableData = {
       bid: "15%",
       ask: "18%",
       netChange: "6%",
-      predictedSpreadMovement: "5%"
+      predictedSpreadMovement: "5%",
     },
   ],
   2: [
@@ -100,7 +100,7 @@ const dummyTableData = {
       bid: "16%",
       ask: "19%",
       netChange: "7%",
-      predictedSpreadMovement: "4%"
+      predictedSpreadMovement: "4%",
     },
     {
       id: 6,
@@ -118,7 +118,7 @@ const dummyTableData = {
       bid: "17%",
       ask: "20%",
       netChange: "8%",
-      predictedSpreadMovement: "3%"
+      predictedSpreadMovement: "3%",
     },
     // Add more data as needed for Portfolio 2
   ],
@@ -139,7 +139,7 @@ const dummyTableData = {
       bid: "18%",
       ask: "21%",
       netChange: "9%",
-      predictedSpreadMovement: "2%"
+      predictedSpreadMovement: "2%",
     },
     // Add more data as needed for Portfolio 3
   ],
@@ -220,26 +220,47 @@ const dummyIssuerData = [
   },
 ];
 
-const dummyCountryData = [
-  {
-    country: "US",
-    sovereignRating: "AA",
-    averageIssuerRating: "AAA",
-  },
-  {
-    country: "UK",
-    sovereignRating: "A",
-    averageIssuerRating: "AA",
-  },
-  {
-    country: "Canada",
-    sovereignRating: "AAA",
-    averageIssuerRating: "BBB",
-  },
+const oecdCountries = [
+  { flag: "🇦🇺", name: "Australia", code: "AUS" },
+  { flag: "🇦🇹", name: "Austria", code: "AUT" },
+  { flag: "🇧🇪", name: "Belgium", code: "BEL" },
+  { flag: "🇨🇦", name: "Canada", code: "CAN" },
+  { flag: "🇨🇱", name: "Chile", code: "CHL" },
+  { flag: "🇨🇿", name: "Czechia", code: "CZE" },
+  { flag: "🇩🇰", name: "Denmark", code: "DNK" },
+  { flag: "🇪🇪", name: "Estonia", code: "EST" },
+  { flag: "🇫🇮", name: "Finland", code: "FIN" },
+  { flag: "🇫🇷", name: "France", code: "FRA" },
+  { flag: "🇩🇪", name: "Germany", code: "DEU" },
+  { flag: "🇬🇷", name: "Greece", code: "GRC" },
+  { flag: "🇭🇺", name: "Hungary", code: "HUN" },
+  { flag: "🇮🇸", name: "Iceland", code: "ISL" },
+  { flag: "🇮🇪", name: "Ireland", code: "IRL" },
+  { flag: "🇮🇱", name: "Israel", code: "ISR" },
+  { flag: "🇮🇹", name: "Italy", code: "ITA" },
+  { flag: "🇯🇵", name: "Japan", code: "JPN" },
+  { flag: "🇰🇷", name: "Korea", code: "KOR" },
+  { flag: "🇱🇻", name: "Latvia", code: "LVA" },
+  { flag: "🇱🇹", name: "Lithuania", code: "LTU" },
+  { flag: "🇱🇺", name: "Luxembourg", code: "LUX" },
+  { flag: "🇲🇽", name: "Mexico", code: "MEX" },
+  { flag: "🇳🇱", name: "Netherlands", code: "NLD" },
+  { flag: "🇳🇿", name: "New Zealand", code: "NZL" },
+  { flag: "🇳🇴", name: "Norway", code: "NOR" },
+  { flag: "🇵🇱", name: "Poland", code: "POL" },
+  { flag: "🇵🇹", name: "Portugal", code: "PRT" },
+  { flag: "🇸🇰", name: "Slovakia", code: "SVK" },
+  { flag: "🇸🇮", name: "Slovenia", code: "SVN" },
+  { flag: "🇪🇸", name: "Spain", code: "ESP" },
+  { flag: "🇸🇪", name: "Sweden", code: "SWE" },
+  { flag: "🇨🇭", name: "Switzerland", code: "CHE" },
+  { flag: "🇹🇷", name: "Turkey", code: "TUR" },
+  { flag: "🇬🇧", name: "United Kingdom", code: "GBR" },
+  { flag: "🇺🇸", name: "United States of America", code: "USA" },
 ];
 
 const Page = () => {
-  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(-1);
   const [selectedPortfolio, setSelectedPortfolio] = useState(1);
   const [portfolioAllocationData, setPortfolioAllocationData] = useState([]);
   const [portfolioAllocationLabels, setPortfolioAllocationLabels] = useState(
@@ -251,7 +272,7 @@ const Page = () => {
   const [maturityAllocationLabels, setMaturityAllocationLabels] = useState([]);
 
   const handleRowClick = (rowData) => {
-    setSelectedRow(rowData.id === selectedRow ? null : rowData.id);
+    setSelectedRow(rowData === selectedRow ? -1 : rowData);
     // Update portfolioAllocationData, portfolioAllocationLabels, ratingAllocationData,
     // ratingAllocationLabels, maturityAllocationData, and maturityAllocationLabels here
   };
@@ -271,6 +292,7 @@ const Page = () => {
           <WatchlistSideBar
             selectedRow={selectedRow}
             onRowClick={handleRowClick}
+            setSelectedRow={setSelectedRow}
             selectedPortfolio={selectedPortfolio}
             setSelectedPortfolio={setSelectedPortfolio}
             dummyTableData={dummyTableData}
@@ -283,7 +305,7 @@ const Page = () => {
           />
         </div>
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          {selectedRow !== null ? (
+          {selectedRow !== -1 ? (
             <>
               <BondBasicInfoCard
                 selectedRow={selectedRow}
@@ -293,9 +315,8 @@ const Page = () => {
               />
               <CountryInfoCard
                 selectedRow={selectedRow}
-                selectedPortfolio={selectedPortfolio}
                 dummyTableData={dummyTableData}
-                dummyCountryData={dummyCountryData}
+                oecdCountries={oecdCountries}
               />
               <IssuerInfoCard />
             </>

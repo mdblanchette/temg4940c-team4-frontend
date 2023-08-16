@@ -17,11 +17,11 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import { set } from "date-fns";
 
 export default function WatchlistSideBar({
   selectedRow,
   onRowClick,
+  setSelectedRow,
   selectedPortfolio,
   setSelectedPortfolio,
   dummyTableData,
@@ -127,6 +127,7 @@ export default function WatchlistSideBar({
             value={selectedPortfolio}
             onChange={(e) => {
               setSelectedPortfolio(e.target.value);
+              setSelectedRow(-1);
             }}
           >
             {Object.keys(dummyTableData).map((key) => (
@@ -216,10 +217,10 @@ export default function WatchlistSideBar({
                   style={{
                     cursor: "pointer",
                     backgroundColor:
-                      selectedRow === row.id ? "#d8d3f5" : "transparent",
+                      selectedRow.id === row.id ? "#d8d3f5" : "transparent",
                     "&:hover": {
                       backgroundColor:
-                        selectedRow === row.id ? "#d8d3f5" : "#f5f5f5",
+                        selectedRow.id === row.id ? "#d8d3f5" : "#f5f5f5",
                     },
                   }}
                 >

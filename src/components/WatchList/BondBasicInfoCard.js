@@ -1,53 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 
 export default function BondBasicInfoCard({
   selectedRow,
   selectedPortfolio,
-  dummyTableData,
   dummyIssuerData,
 }) {
-  const [selectedRowData, setSelectedRowData] = useState(null);
   const [predictedIssuerRating, setPredictedIssuerRating] = useState("");
 
   useEffect(() => {
-    if (selectedRow !== null && selectedPortfolio) {
-      const selectedData = dummyTableData[selectedPortfolio].find(
-        (item) => item.id === selectedRow
-      );
+    const selectedIssuer = selectedRow.issuer;
+    const issuerData = dummyIssuerData.find(
+      (issuer) => issuer.issuer === selectedIssuer
+    );
 
-      setSelectedRowData(selectedData);
-
-      const selectedIssuer = selectedData.issuer;
-      const issuerData = dummyIssuerData.find(
-        (issuer) => issuer.issuer === selectedIssuer
-      );
-
-      if (issuerData) {
-        setPredictedIssuerRating(issuerData.predictedIssuerRating);
-      }
+    if (issuerData) {
+      setPredictedIssuerRating(issuerData.predictedIssuerRating);
     }
+    console.log("selectedRow", selectedRow);
   }, [selectedRow, selectedPortfolio]);
 
   const basicinfodata = [
-    { title: 'Name', subtitle: selectedRowData?.name || 'N/A' },
-    { title: 'Country', subtitle: selectedRowData?.country || 'N/A' },
-    { title: 'Issuer', subtitle: selectedRowData?.issuer || 'N/A' },
-    { title: 'Rating', subtitle: selectedRowData?.rating || 'N/A' },
-    { title: "Spread", subtitle: selectedRowData?.spread || 'N/A' },
-    { title: "Coupons", subtitle: selectedRowData?.coupons || 'N/A' },
-    { title: "Maturity Date", subtitle: selectedRowData?.maturity || 'N/A' },
-    { title: "Liquidity", subtitle: selectedRowData?.liquidity || 'N/A' },
-    { title: "Outstanding Amount", subtitle: selectedRowData?.outstandingAmount || 'N/A' },
-    { title: "Bid", subtitle: selectedRowData?.bid || 'N/A' },
-    { title: "Ask", subtitle: selectedRowData?.ask || 'N/A' },
-    { title: "Net Change", subtitle: selectedRowData?.netChange || 'N/A' },
+    { title: "Name", subtitle: selectedRow?.name || "N/A" },
+    { title: "Country", subtitle: selectedRow?.country || "N/A" },
+    { title: "Issuer", subtitle: selectedRow?.issuer || "N/A" },
+    { title: "Rating", subtitle: selectedRow?.rating || "N/A" },
+    { title: "Spread", subtitle: selectedRow?.spread || "N/A" },
+    { title: "Coupons", subtitle: selectedRow?.coupons || "N/A" },
+    { title: "Maturity Date", subtitle: selectedRow?.maturity || "N/A" },
+    { title: "Liquidity", subtitle: selectedRow?.liquidity || "N/A" },
+    {
+      title: "Outstanding Amount",
+      subtitle: selectedRow?.outstandingAmount || "N/A",
+    },
+    { title: "Bid", subtitle: selectedRow?.bid || "N/A" },
+    { title: "Ask", subtitle: selectedRow?.ask || "N/A" },
+    { title: "Net Change", subtitle: selectedRow?.netChange || "N/A" },
   ];
 
-
   const bondpredictiondata = [
-    { title: "Predicted Issuer Credit Rating", subtitle: predictedIssuerRating || 'N/A' },
-    { title: "Spread Change", subtitle: selectedRowData?.predictedSpreadMovement || 'N/A' },
+    {
+      title: "Predicted Issuer Credit Rating",
+      subtitle: predictedIssuerRating || "N/A",
+    },
+    {
+      title: "Spread Change",
+      subtitle: selectedRow?.predictedSpreadMovement || "N/A",
+    },
     { title: "Confidence Level for Spread Change", subtitle: "Subtitle 3" },
   ];
 
@@ -93,15 +92,10 @@ export default function BondBasicInfoCard({
           >
             {bondpredictiondata.map((data, index) => (
               <div key={index}>
-                <Typography
-                  variant="body2"
-                  style={{ marginBottom: "5px" }}
-                >
+                <Typography variant="body2" style={{ marginBottom: "5px" }}>
                   {data.title}
                 </Typography>
-                <Typography variant="subtitle1">
-                  {data.subtitle}
-                </Typography>
+                <Typography variant="subtitle1">{data.subtitle}</Typography>
               </div>
             ))}
           </div>
