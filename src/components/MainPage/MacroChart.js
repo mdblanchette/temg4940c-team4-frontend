@@ -1,16 +1,12 @@
 import { Chart } from "../MainPage/chart";
 
-export default function MacroChart() {
-  const time_period = [
-    "Today",
-    "This Week",
-    "This Month",
-    "This Year",
-    "2 Years",
-    "5 Years",
-    "10 Years",
-  ];
-
+export default function MacroChart({
+  selectedCountry,
+  indicatorA,
+  indicatorB,
+  indicatorA_Data,
+  indicatorB_Data,
+}) {
   const chartOptions = {
     chart: {
       height: 300,
@@ -20,50 +16,52 @@ export default function MacroChart() {
     dataLabels: {
       enabled: false,
     },
-    colors: ["#FF1654", "#247BA0"],
+    colors: ["#008ffb", "#00e396"],
     series: [
       {
-        name: "Series A",
-        data: [1.4, 2, 2.5, 1.5, 2.5, 2.8, 3.8, 4.6],
+        name: "A: " + indicatorA,
+        data: selectedCountry === "Global" ? [] : indicatorA_Data,
       },
       {
-        name: "Series B",
-        data: [20, 29, 37, 36, 44, 45, 50, 58],
+        name: "B: " + indicatorB,
+        data: selectedCountry === "Global" ? [] : indicatorB_Data,
       },
     ],
     stroke: {
-      width: [4, 4],
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: "20%",
-      },
+      width: [3, 3],
     },
     xaxis: {
-      categories: [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+      categories: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
     },
     yaxis: [
       {
+        seriesName: indicatorA,
         axisTicks: {
           show: true,
         },
         axisBorder: {
           show: true,
-          color: "#FF1654",
+          color: "#008ffb",
         },
         labels: {
           style: {
-            colors: "#FF1654",
+            colors: "#008ffb",
           },
-        },
-        title: {
-          text: "Series A",
-          style: {
-            color: "#FF1654",
+          formatter: function (val) {
+            if (val) {
+              if (
+                indicatorA.includes("Rate") ||
+                indicatorA === "Consumer Price Index" ||
+                indicatorA === "Government Debt to GDP"
+              )
+                return val.toFixed(2) + "%";
+              else return val.toFixed(0);
+            } else return;
           },
         },
       },
       {
+        seriesName: indicatorB,
         opposite: true,
         axisTicks: {
           show: true,
@@ -74,22 +72,28 @@ export default function MacroChart() {
         },
         labels: {
           style: {
-            colors: "#247BA0",
+            colors: "#00e396",
           },
-        },
-        title: {
-          text: "Series B",
-          style: {
-            color: "#247BA0",
+          formatter: function (val) {
+            if (val) {
+              if (
+                indicatorB.includes("Rate") ||
+                indicatorB === "Consumer Price Index" ||
+                indicatorB === "Government Debt to GDP"
+              )
+                return val.toFixed(2) + "%";
+              else return val.toFixed(0);
+            } else return;
           },
         },
       },
     ],
     tooltip: {
-      shared: false,
-      intersect: true,
-      x: {
-        show: false,
+      fixed: {
+        enabled: true,
+        position: "topCenter",
+        offsetX: 0,
+        offsetY: -80,
       },
     },
     legend: {
@@ -103,7 +107,8 @@ export default function MacroChart() {
       options={chartOptions}
       series={chartOptions.series}
       type="line"
-      height={300}
+      height={250}
+      width={"100%"}
     />
   );
 }

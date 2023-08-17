@@ -15,52 +15,59 @@ import {
   Geography,
   ZoomableGroup,
 } from "react-simple-maps";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const mapWidth = 800;
 const mapHeight = 400;
 
-export default function Map({ selectedCountry, setSelectedCountry }) {
+export default function Map({
+  oecdCountries,
+  setSelectedCountry,
+  setSelectedCountryCode,
+  setSelectedCountryFlag,
+}) {
   const [position, setPosition] = useState({ center: [0, 20], zoom: 1 });
-  const oecdCountries = [
-    { flag: "🇦🇺", name: "Australia", code: "AUS" },
-    { flag: "🇦🇹", name: "Austria", code: "AUT" },
-    { flag: "🇧🇪", name: "Belgium", code: "BEL" },
-    { flag: "🇨🇦", name: "Canada", code: "CAN" },
-    { flag: "🇨🇱", name: "Chile", code: "CHL" },
-    { flag: "🇨🇿", name: "Czechia", code: "CZE" },
-    { flag: "🇩🇰", name: "Denmark", code: "DNK" },
-    { flag: "🇪🇪", name: "Estonia", code: "EST" },
-    { flag: "🇫🇮", name: "Finland", code: "FIN" },
-    { flag: "🇫🇷", name: "France", code: "FRA" },
-    { flag: "🇩🇪", name: "Germany", code: "DEU" },
-    { flag: "🇬🇷", name: "Greece", code: "GRC" },
-    { flag: "🇭🇺", name: "Hungary", code: "HUN" },
-    { flag: "🇮🇸", name: "Iceland", code: "ISL" },
-    { flag: "🇮🇪", name: "Ireland", code: "IRL" },
-    { flag: "🇮🇱", name: "Israel", code: "ISR" },
-    { flag: "🇮🇹", name: "Italy", code: "ITA" },
-    { flag: "🇯🇵", name: "Japan", code: "JPN" },
-    { flag: "🇰🇷", name: "Korea", code: "KOR" },
-    { flag: "🇱🇻", name: "Latvia", code: "LVA" },
-    { flag: "🇱🇹", name: "Lithuania", code: "LTU" },
-    { flag: "🇱🇺", name: "Luxembourg", code: "LUX" },
-    { flag: "🇲🇽", name: "Mexico", code: "MEX" },
-    { flag: "🇳🇱", name: "Netherlands", code: "NLD" },
-    { flag: "🇳🇿", name: "New Zealand", code: "NZL" },
-    { flag: "🇳🇴", name: "Norway", code: "NOR" },
-    { flag: "🇵🇱", name: "Poland", code: "POL" },
-    { flag: "🇵🇹", name: "Portugal", code: "PRT" },
-    { flag: "🇸🇰", name: "Slovakia", code: "SVK" },
-    { flag: "🇸🇮", name: "Slovenia", code: "SVN" },
-    { flag: "🇪🇸", name: "Spain", code: "ESP" },
-    { flag: "🇸🇪", name: "Sweden", code: "SWE" },
-    { flag: "🇨🇭", name: "Switzerland", code: "CHE" },
-    { flag: "🇹🇷", name: "Turkey", code: "TUR" },
-    { flag: "🇬🇧", name: "United Kingdom", code: "GBR" },
-    { flag: "🇺🇸", name: "United States of America", code: "USA" },
-  ];
+  const [inputValue, setInputValue] = useState("");
+  const [countryCreditMigration, setCountryCreditMigration] = useState([
+    { code: "AUS", predictedMigration: 0 },
+    { code: "AUT", predictedMigration: 0 },
+    { code: "BEL", predictedMigration: 0 },
+    { code: "CAN", predictedMigration: 0 },
+    { code: "CRI", predictedMigration: 0 },
+    { code: "CHL", predictedMigration: 0 },
+    { code: "CZE", predictedMigration: 0 },
+    { code: "DNK", predictedMigration: 0 },
+    { code: "EST", predictedMigration: 0 },
+    { code: "FIN", predictedMigration: 0 },
+    { code: "FRA", predictedMigration: 0 },
+    { code: "DEU", predictedMigration: 0 },
+    { code: "GRC", predictedMigration: 0 },
+    { code: "HUN", predictedMigration: 0 },
+    { code: "ISL", predictedMigration: 0 },
+    { code: "IRL", predictedMigration: 0 },
+    { code: "ISR", predictedMigration: 0 },
+    { code: "ITA", predictedMigration: 0 },
+    { code: "JPN", predictedMigration: 0 },
+    { code: "KOR", predictedMigration: 0 },
+    { code: "LVA", predictedMigration: 0 },
+    { code: "LTU", predictedMigration: 0 },
+    { code: "LUX", predictedMigration: 0 },
+    { code: "MEX", predictedMigration: 0 },
+    { code: "NLD", predictedMigration: 0 },
+    { code: "NZL", predictedMigration: 0 },
+    { code: "NOR", predictedMigration: 0 },
+    { code: "POL", predictedMigration: 0 },
+    { code: "PRT", predictedMigration: 0 },
+    { code: "SVK", predictedMigration: 0 },
+    { code: "SVN", predictedMigration: 0 },
+    { code: "ESP", predictedMigration: 0 },
+    { code: "SWE", predictedMigration: 0 },
+    { code: "CHE", predictedMigration: 0 },
+    { code: "TUR", predictedMigration: 0 },
+    { code: "GBR", predictedMigration: 0 },
+    { code: "USA", predictedMigration: 0 },
+  ]);
 
   function handleZoomIn() {
     if (position.zoom >= 4) setPosition((pos) => ({ ...pos, zoom: 4 }));
@@ -83,11 +90,81 @@ export default function Map({ selectedCountry, setSelectedCountry }) {
   function renderCountry(countryName) {
     // If country is an OECD country, setSelectedCountry to country name
     if (isOECD(countryName)) {
-      setSelectedCountry(countryName);
+      const oecdCountry = oecdCountries.find((c) => c.name === countryName);
+      setSelectedCountryCode(oecdCountry.code);
+      setSelectedCountry(oecdCountry.name);
+      setSelectedCountryFlag(oecdCountry.flag);
+      setInputValue(oecdCountry.flag + " " + countryName);
+      const countryDetails = {
+        code: oecdCountry.code,
+        name: oecdCountry.name,
+        flag: oecdCountry.flag,
+        inputValue: oecdCountry.flag + " " + countryName,
+      };
+      localStorage.setItem("selectedCountry", JSON.stringify(countryDetails));
     } else if (countryName === "Global") {
       setSelectedCountry("Global");
+      setSelectedCountryCode("Global");
+      setSelectedCountryFlag("");
+      setInputValue("");
+
+      localStorage.removeItem("selectedCountry");
     }
   }
+
+  async function getPredictionData(countryCode) {
+    const fetch_link =
+      "http://localhost:3500/prediction/creditMigration2024/country/" +
+      countryCode;
+    const res = await fetch(fetch_link);
+    const parsed_res = await res.json();
+    return parsed_res;
+  }
+
+  function colorCodeCountry(country) {
+    // Convert the country name to its corresponding country code
+    const countryDetails = oecdCountries.find((c) => c.name === country);
+    const countryCode = countryDetails.code;
+
+    const predictionData = countryCreditMigration.find(
+      (c) => c.code === countryCode
+    );
+    let migration = predictionData.predictedMigration;
+    if (migration === "N/A") return "#D6D6DA";
+    migration = parseFloat(migration);
+    if (migration >= 2) return "#009444";
+    else if (migration >= 1) return "#8dc740";
+    else if (migration >= 0) return "#ffde18";
+    else if (migration >= -1) return "#f46522";
+    else return "#ed1c25";
+  }
+
+  const updateCountryCreditMigration = async () => {
+    const countryCreditMigrationCopy = [...countryCreditMigration];
+    for (let i = 0; i < countryCreditMigrationCopy.length; i++) {
+      const country = countryCreditMigrationCopy[i];
+      const predictionData = await getPredictionData(country.code);
+      let migration = predictionData["Yearly Average Credit Migration"];
+      if (migration === "N/A") migration = "N/A";
+      else migration = parseFloat(migration);
+      countryCreditMigrationCopy[i].predictedMigration = migration;
+    }
+    setCountryCreditMigration(countryCreditMigrationCopy);
+  };
+
+  useEffect(() => {
+    // Retrieve the stored country details from localStorage
+    const storedCountry = localStorage.getItem("selectedCountry");
+    if (storedCountry) {
+      const countryDetails = JSON.parse(storedCountry);
+      setSelectedCountryCode(countryDetails.code);
+      setSelectedCountry(countryDetails.name);
+      setSelectedCountryFlag(countryDetails.flag);
+      setInputValue(countryDetails.inputValue);
+    }
+
+    updateCountryCreditMigration();
+  }, [setSelectedCountryCode, setSelectedCountry, setSelectedCountryFlag]);
 
   return (
     <Card sx={{ height: "100%" }}>
@@ -126,14 +203,13 @@ export default function Map({ selectedCountry, setSelectedCountry }) {
                         stroke="#000000"
                         style={{
                           default: {
-                            fill:
-                              selectedCountry === geo.properties.name
-                                ? "#04D"
-                                : "#D6D6DA",
+                            fill: isOECD(geo.properties.name)
+                              ? colorCodeCountry(geo.properties.name)
+                              : "#D6D6DA",
                           },
                           hover: {
                             fill: isOECD(geo.properties.name)
-                              ? "#04D"
+                              ? "#5999ff"
                               : "#D6D6DA",
                           },
                         }}
@@ -161,6 +237,10 @@ export default function Map({ selectedCountry, setSelectedCountry }) {
               onChange={(e, option) => {
                 if (option) renderCountry(option.name);
               }}
+              onInputChange={(e, newInputValue) => {
+                // Update the input value as the user types
+                setInputValue(newInputValue);
+              }}
               renderOption={(props, option) => (
                 <Box
                   component="li"
@@ -181,6 +261,7 @@ export default function Map({ selectedCountry, setSelectedCountry }) {
                     inputProps={{
                       ...params.inputProps,
                       autoComplete: "new-password",
+                      value: inputValue,
                     }}
                     sx={{
                       width: 200,
