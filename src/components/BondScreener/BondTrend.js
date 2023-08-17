@@ -12,13 +12,18 @@ import {
 import { Chart } from "../MainPage/chart";
 import { alpha, useTheme } from "@mui/material/styles";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { LineChart } from "@mui/x-charts";
 
-function useChartOptions(unit) {
-  const theme = useTheme();
-
-  return {
+export default function BondTrendCard({
+  indicatorA,
+  indicatorB,
+  dataA,
+  dataB,
+}) {
+  //const chartOptions = useChartOptions();
+  const chartOptions = {
+    //const theme = useTheme();
     chart: {
       type: "area",
       stacked: false,
@@ -27,9 +32,6 @@ function useChartOptions(unit) {
         type: "x",
         enabled: true,
         autoScaleYaxis: true,
-      },
-      toolbar: {
-        autoSelected: "zoom",
       },
     },
     dataLabels: {
@@ -45,12 +47,13 @@ function useChartOptions(unit) {
         stops: [0, 90, 100],
       },
     },
-    yaxis: {
-      labels: {
-        formatter: (value) => `${value} ${unit}`,
-        offsetX: -10,
-      },
-    },
+    colors: ["#FF1654", "#247BA0"],
+    // yaxis: {
+    //   labels: {
+    //     formatter: (value) => `${value} ${unit}`,
+    //     offsetX: -10,
+    //   },
+    // },
     //   labels: {
     //     formatter: function (val) {
     //       return (val / 1000000).toFixed(0);
@@ -60,83 +63,135 @@ function useChartOptions(unit) {
     //     text: 'Value'
     //   },
     // },
+    // xaxis: {
+    //   categories: [
+    //     "Jan",
+    //     "Feb",
+    //     "Mar",
+    //     "Apr",
+    //     "May",
+    //     "Jun",
+    //     "Jul",
+    //     "Aug",
+    //     "Sep",
+    //     "Oct",
+    //     "Nov",
+    //     "Dec",
+    //   ],
+    //   labels: {
+    //     offsetY: 5,
+    //     style: {
+    //       colors: theme.palette.text.secondary,
+    //     },
+    //   },
+    // },
+    series: indicatorB
+      ? [
+          {
+            name: "A: " + indicatorA,
+            data: dataA,
+          },
+          {
+            name: "B: " + indicatorB,
+            data: dataB,
+          },
+        ]
+      : [
+          {
+            name: indicatorA,
+            data: dataA,
+          },
+        ],
+    stroke: {
+      width: [3, 3],
+    },
     xaxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
-      labels: {
-        offsetY: 5,
-        style: {
-          colors: theme.palette.text.secondary,
-        },
-      },
+      categories: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022],
+    },
+    yaxis: indicatorB
+      ? [
+          {
+            seriesName: indicatorA,
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#FF1654",
+            },
+            labels: {
+              style: {
+                colors: "#FF1654",
+              },
+              formatter: function (val) {
+                if (val) return val.toFixed(0);
+                else return;
+              },
+            },
+          },
+          {
+            seriesName: indicatorB,
+            opposite: true,
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#247BA0",
+            },
+            labels: {
+              style: {
+                colors: "#247BA0",
+              },
+              formatter: function (val) {
+                if (val) return val.toFixed(0);
+                else return;
+              },
+            },
+          },
+        ]
+      : [
+          {
+            seriesName: indicatorA,
+            axisTicks: {
+              show: true,
+            },
+            axisBorder: {
+              show: true,
+              color: "#FF1654",
+            },
+            labels: {
+              style: {
+                colors: "#FF1654",
+              },
+              formatter: function (val) {
+                if (val) return val.toFixed(0);
+                else return;
+              },
+            },
+          },
+        ],
+    tooltip: {
+      enabled: true,
+      followCursor: true,
+      // fixed: {
+      //   enabled: true,
+      //   position: "topCenter",
+      //   offsetX: 0,
+      //   offsetY: -80,
+      // },
+    },
+    legend: {
+      horizontalAlign: "left",
+      offsetX: 40,
     },
   };
-}
-
-export default function BondTrendCard() {
-  //const chartOptions = useChartOptions();
-
-  const [chosenTimeRatingSpread, setChosenTimeRatingSpread] = useState("Today");
-  const [inputTimeRatingSpread, setInputTimeRatingSpread] = useState("");
-  const [chosenTimeRatingPrice, setChosenTimeRatingPrice] = useState("Today");
-  const [inputTimeRatingPrice, setInputTimeRatingPrice] = useState("");
-  const [averageRating, setAverageRating] = useState("BBB");
-  const [averageSpread, setAverageSpread] = useState(7.6);
-  const [averagePrice, setAveragePrice] = useState(79.3);
-
-  // dummy list of values
-  const bondCreditRating = [
-    "AAA",
-    "AA+",
-    "AAA",
-    "AAA",
-    "AA+",
-    "AA+",
-    "AA",
-    "AA+",
-    "AA+",
-    "AAA",
-    "AAA",
-    "AAA",
-  ];
-
-  const creditSpread = [
-    {
-      name: "Credit Spread",
-      data: [0.5, 0.9, 0.6, 0.6, 0.8, 0.8, 1.1, 0.8, 0.8, 0.5, 0.5, 0.5],
-    },
-  ];
-
-  const bondPrice = [
-    {
-      name: "Bond Price",
-      data: [
-        101.5, 100.25, 101.48, 101.48, 99.5, 99.5, 97.75, 98.25, 98.25, 100.0,
-        100.0, 100.0,
-      ],
-    },
-  ];
 
   const time_period = [
-    "Today",
-    "This Week",
-    "This Month",
-    "This Year",
-    "2 Years",
-    "5 Years",
-    "10 Years",
+    "Last 1 year",
+    "Last 2 years",
+    "Last 5 years",
+    "Last 10 years",
   ];
 
   return (
@@ -145,7 +200,7 @@ export default function BondTrendCard() {
         action={
           <TextField
             select
-            defaultValue={"Today"}
+            defaultValue={"Last 10 years"}
             size="small"
             variant="standard"
           >
@@ -161,7 +216,7 @@ export default function BondTrendCard() {
 
       <CardContent>
         <Stack spacing={4}>
-          <Stack spacing={1}>
+          {/* <Stack spacing={1}>
             <Typography>Average Credit Spread History</Typography>
 
             <Chart
@@ -171,16 +226,25 @@ export default function BondTrendCard() {
               type="area"
               width="100%"
             />
-          </Stack>
+          </Stack> */}
 
           <Stack spacing={1}>
-            <Typography>Average Price History</Typography>
-
+            {indicatorB ? (
+              <Typography>
+                {indicatorA}
+                {" vs "}
+                {indicatorB}
+              </Typography>
+            ) : (
+              <Typography>{indicatorA}</Typography>
+            )}
             <Chart
               height={350}
-              series={bondPrice}
-              options={useChartOptions("bp")}
+              //options={useChartOptions("bp")}
               //options={useChartOptions("Price", bondPrice)}
+              //options={ indicatorB ? <useChartOptions indicatorA={indicatorA} indicatorB={indicatorB} dataA={dataA} dataB={dataB}/> : <useChartOptions indicatorA={indicatorA} dataA={dataA}/>}
+              options={chartOptions}
+              series={chartOptions.series}
               type="area"
               width="100%"
             />

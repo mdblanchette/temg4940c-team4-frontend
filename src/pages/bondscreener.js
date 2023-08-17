@@ -14,7 +14,14 @@ const Page = () => {
         py: 2,
       }}
     >
-      <Container maxWidth="xl">
+      <Container
+        maxWidth="xxl"
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <MultiResultCard />
       </Container>
     </Box>

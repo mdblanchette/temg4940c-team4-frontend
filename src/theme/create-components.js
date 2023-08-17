@@ -47,6 +47,16 @@ export function createComponents(config) {
         textSizeLarge: {
           padding: "12px 16px",
         },
+        contained: {
+          backgroundColor: "#007AF5",
+        },
+        outlined: {
+          borderColor: "#007AF5",
+          color: "#007AF5",
+        },
+        primary: {
+          color: "#007AF5",
+        },
       },
     },
     MuiCard: {
@@ -81,7 +91,7 @@ export function createComponents(config) {
       },
       styleOverrides: {
         root: {
-          padding: "32px 24px 16px",
+          padding: "32px 24px 4px",
         },
       },
     },

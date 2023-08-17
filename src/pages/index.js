@@ -1,4 +1,4 @@
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import { Layout as DashboardLayout } from "../layout/Layout";
 import Map from "../components/MainPage/Map";
 import WorldCredit from "../components/MainPage/WorldCredit";
