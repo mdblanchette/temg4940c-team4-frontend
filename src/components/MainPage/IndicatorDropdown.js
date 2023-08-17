@@ -7,6 +7,8 @@ const indicators = [
   "Government Spending",
   "Short Term Interest Rate",
   "Unemployment Rate",
+  "Consumer Price Index",
+  "Government Debt to GDP",
 ];
 
 export default function IndicatorDropdown(props) {

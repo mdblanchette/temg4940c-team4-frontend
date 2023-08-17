@@ -16,7 +16,7 @@ export default function MacroChart({
     dataLabels: {
       enabled: false,
     },
-    colors: ["#FF1654", "#247BA0"],
+    colors: ["#008ffb", "#00e396"],
     series: [
       {
         name: "A: " + indicatorA,
@@ -41,15 +41,22 @@ export default function MacroChart({
         },
         axisBorder: {
           show: true,
-          color: "#FF1654",
+          color: "#008ffb",
         },
         labels: {
           style: {
-            colors: "#FF1654",
+            colors: "#008ffb",
           },
           formatter: function (val) {
-            if (val) return val.toFixed(0);
-            else return;
+            if (val) {
+              if (
+                indicatorA.includes("Rate") ||
+                indicatorA === "Consumer Price Index" ||
+                indicatorA === "Government Debt to GDP"
+              )
+                return val.toFixed(2) + "%";
+              else return val.toFixed(0);
+            } else return;
           },
         },
       },
@@ -65,11 +72,18 @@ export default function MacroChart({
         },
         labels: {
           style: {
-            colors: "#247BA0",
+            colors: "#00e396",
           },
           formatter: function (val) {
-            if (val) return val.toFixed(0);
-            else return;
+            if (val) {
+              if (
+                indicatorB.includes("Rate") ||
+                indicatorB === "Consumer Price Index" ||
+                indicatorB === "Government Debt to GDP"
+              )
+                return val.toFixed(2) + "%";
+              else return val.toFixed(0);
+            } else return;
           },
         },
       },

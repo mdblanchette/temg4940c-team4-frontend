@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import MacroChart from "./MacroChart";
 import IndicatorDropdown from "./IndicatorDropdown";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function MacroeconomicIndicators({
   selectedCountry,
@@ -69,15 +69,22 @@ export default function MacroeconomicIndicators({
       title: "Unemployment Rate",
       interval: "monthly-word", // eg Sep-05, Oct-05, Nov-05...
     },
+    {
+      title: "Consumer Price Index",
+      interval: "monthly-num", // eg 2000-06-01, 2000-07-01, 2000-08-01...
+    },
+    {
+      title: "Government Debt to GDP",
+      interval: "monthly-num", // eg 2000-06-01, 2000-07-01, 2000-08-01...
+    },
   ];
 
-  async function getMacroData(selectedCountryCode, indicator, macroData) {
+  async function getMacroData(selectedCountryCode, indicator) {
     const fetch_link =
       "http://localhost:3500/macro/" +
       convertTitleToKey(indicator) +
       "/" +
       selectedCountryCode;
-    console.log(fetch_link);
     const res = await fetch(fetch_link);
     const parsed_res = await res.json();
     return parsed_res;
@@ -149,18 +156,12 @@ export default function MacroeconomicIndicators({
               ]
             );
             found_latest = true;
-            if (month === 1) {
-              year--;
-              month = 12;
-            } else {
-              month--;
-            }
           } else {
             // Push the 9 values by year before the latest value into graphData
             for (let i = year - 1; i > year - 10; i--) {
               graphData.unshift(
                 data[
-                  year.toString() +
+                  i.toString() +
                     "-" +
                     (month >= 10 ? month.toString() : "0" + month.toString()) +
                     "-01"
@@ -276,7 +277,7 @@ export default function MacroeconomicIndicators({
         // For macroData1, Start from 2023-08-01 and keep going back until you find a value. 2023-08-01 -> 2023-07-01 -> 2023-06-01 -> ... -> 2023-01-01 -> 2022-12-01 -> 2022-11-01 -> ...
         // For prevMacroData1, Start from the quarter before macroData1 and keep going back until you find a value.
         let year = current_year;
-        let month = 8;
+        let month = 6;
         while (year > 0) {
           if (
             data[
@@ -304,10 +305,9 @@ export default function MacroeconomicIndicators({
           }
         }
       } else {
-        console.log("monthly-word");
         // eg Sep-05, Oct-05, Nov-05...
         let year = current_year;
-        let month = 8;
+        let month = 6;
         const monthNames = [
           "Jan",
           "Feb",
@@ -324,7 +324,6 @@ export default function MacroeconomicIndicators({
         ];
 
         while (year > 0) {
-          console.log(data[monthNames[month - 1] + "-" + (year % 100)]);
           if (data[monthNames[month - 1] + "-" + (year % 100)]) {
             latest_country_data =
               data[monthNames[month - 1] + "-" + (year % 100)];
@@ -379,7 +378,7 @@ export default function MacroeconomicIndicators({
         // For macroData1, Start from 2023-08-01 and keep going back until you find a value. 2023-08-01 -> 2023-07-01 -> 2023-06-01 -> ... -> 2023-01-01 -> 2022-12-01 -> 2022-11-01 -> ...
         // For prevMacroData1, go back 12 months from macroData1 and keep going back until you find a value. 2023-07-01 -> 2023-06-01 -> ... -> 2022-08-01 -> 2022-07-01 -> ...
         let year = current_year;
-        let month = 8;
+        let month = 6;
         let found_latest = false;
         while (year > 0) {
           if (
@@ -422,7 +421,7 @@ export default function MacroeconomicIndicators({
       } else {
         // eg Sep-05, Oct-05, Nov-05...
         let year = current_year;
-        let month = 8;
+        let month = 6;
         const monthNames = [
           "Jan",
           "Feb",
@@ -495,6 +494,9 @@ export default function MacroeconomicIndicators({
   }, [selectedCountry, selectedCountryCode, indicator6, timeframe]);
 
   function convertTitleToKey(title) {
+    if (title === "Consumer Price Index") return "cpi";
+    if (title === "Government Debt to GDP") return "governmentDeficit";
+
     // Convert the first word to all lowercase. Convert the remaining words so that only the first letter is uppercase. Join the words together with no spaces.
     return title
       .split(" ")
@@ -524,11 +526,11 @@ export default function MacroeconomicIndicators({
       absoluteValue = absoluteValue.toFixed(2);
     }
 
-    return (number < 0 ? "-" : "") + absoluteValue.toString();
+    return absoluteValue.toString();
   }
   function getPercentageChange(current, prev) {
     let percentageChange = (
-      ((parseInt(current) - parseInt(prev)) / parseInt(prev)) *
+      ((parseFloat(current) - parseFloat(prev)) / parseFloat(prev)) *
       100
     ).toFixed(2);
     let percentageChangeString =
@@ -566,19 +568,26 @@ export default function MacroeconomicIndicators({
       <CardHeader
         sx={{ paddingBottom: 0 }} // Adjust the padding here
         action={
-          <TextField
-            select
-            defaultValue={timeframe}
-            size="small"
-            variant="standard"
-            onChange={(e) => setTimeframe(e.target.value)}
-          >
-            {time_period.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
+          <Box>
+            <Typography
+              style={{ display: "inline-block", marginRight: "10px" }}
+            >
+              Set timeframe:
+            </Typography>
+            <TextField
+              select
+              defaultValue={timeframe}
+              size="small"
+              variant="standard"
+              onChange={(e) => setTimeframe(e.target.value)}
+            >
+              {time_period.map((option) => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
         }
         title={selectedCountryFlag + " Macroeconomic Indicators"}
       />
@@ -621,9 +630,15 @@ export default function MacroeconomicIndicators({
               <Box style={{ display: "flex", justifyContent: "center" }}>
                 <Typography variant="h5">
                   {selectedCountry === "Global" || macroData1 === "N/A"
-                    ? "N/A"
-                    : indicator1.includes("Rate")
-                    ? simplifyNumber(macroData1) + "%"
+                    ? "-"
+                    : indicator1.includes("Rate") ||
+                      indicator1 === "Consumer Price Index" ||
+                      indicator1 === "Government Debt to GDP"
+                    ? macroData1 < 0
+                      ? "-" + simplifyNumber(macroData1) + "%"
+                      : simplifyNumber(macroData1) + "%"
+                    : macroData1 < 0
+                    ? "-$" + simplifyNumber(macroData1)
                     : "$" + simplifyNumber(macroData1)}
                 </Typography>
                 {getPercentageChange(macroData1, prevMacroData1)}
@@ -640,9 +655,15 @@ export default function MacroeconomicIndicators({
               <Box style={{ display: "flex", justifyContent: "center" }}>
                 <Typography variant="h5">
                   {selectedCountry === "Global" || macroData2 === "N/A"
-                    ? "N/A"
-                    : indicator2.includes("Rate")
-                    ? simplifyNumber(macroData2) + "%"
+                    ? "-"
+                    : indicator2.includes("Rate") ||
+                      indicator2 === "Consumer Price Index" ||
+                      indicator2 === "Government Debt to GDP"
+                    ? macroData2 < 0
+                      ? "-" + simplifyNumber(macroData2) + "%"
+                      : simplifyNumber(macroData2) + "%"
+                    : macroData2 < 0
+                    ? "-$" + simplifyNumber(macroData2)
                     : "$" + simplifyNumber(macroData2)}
                 </Typography>
                 {getPercentageChange(macroData2, prevMacroData2)}
@@ -659,9 +680,15 @@ export default function MacroeconomicIndicators({
               <Box style={{ display: "flex", justifyContent: "center" }}>
                 <Typography variant="h5">
                   {selectedCountry === "Global" || macroData3 === "N/A"
-                    ? "N/A"
-                    : indicator3.includes("Rate")
-                    ? simplifyNumber(macroData3) + "%"
+                    ? "-"
+                    : indicator3.includes("Rate") ||
+                      indicator3 === "Consumer Price Index" ||
+                      indicator3 === "Government Debt to GDP"
+                    ? macroData3 < 0
+                      ? "-" + simplifyNumber(macroData3) + "%"
+                      : simplifyNumber(macroData3) + "%"
+                    : macroData3 < 0
+                    ? "-$" + simplifyNumber(macroData3)
                     : "$" + simplifyNumber(macroData3)}
                 </Typography>
                 {getPercentageChange(macroData3, prevMacroData3)}
@@ -678,9 +705,15 @@ export default function MacroeconomicIndicators({
               <Box style={{ display: "flex", justifyContent: "center" }}>
                 <Typography variant="h5">
                   {selectedCountry === "Global" || macroData4 === "N/A"
-                    ? "N/A"
-                    : indicator4.includes("Rate")
-                    ? simplifyNumber(macroData4) + "%"
+                    ? "-"
+                    : indicator4.includes("Rate") ||
+                      indicator4 === "Consumer Price Index" ||
+                      indicator4 === "Government Debt to GDP"
+                    ? macroData4 < 0
+                      ? "-" + simplifyNumber(macroData4) + "%"
+                      : simplifyNumber(macroData4) + "%"
+                    : macroData4 < 0
+                    ? "-$" + simplifyNumber(macroData4)
                     : "$" + simplifyNumber(macroData4)}
                 </Typography>
                 {getPercentageChange(macroData4, prevMacroData4)}
@@ -697,9 +730,15 @@ export default function MacroeconomicIndicators({
               <Box style={{ display: "flex", justifyContent: "center" }}>
                 <Typography variant="h5">
                   {selectedCountry === "Global" || macroData5 === "N/A"
-                    ? "N/A"
-                    : indicator5.includes("Rate")
-                    ? simplifyNumber(macroData5) + "%"
+                    ? "-"
+                    : indicator5.includes("Rate") ||
+                      indicator5 === "Consumer Price Index" ||
+                      indicator5 === "Government Debt to GDP"
+                    ? macroData5 < 0
+                      ? "-" + simplifyNumber(macroData5) + "%"
+                      : simplifyNumber(macroData5) + "%"
+                    : macroData5 < 0
+                    ? "-$" + simplifyNumber(macroData5)
                     : "$" + simplifyNumber(macroData5)}
                 </Typography>
                 {getPercentageChange(macroData5, prevMacroData5)}
@@ -716,9 +755,15 @@ export default function MacroeconomicIndicators({
               <Box style={{ display: "flex", justifyContent: "center" }}>
                 <Typography variant="h5">
                   {selectedCountry === "Global" || macroData6 === "N/A"
-                    ? "N/A"
-                    : indicator6.includes("Rate")
-                    ? simplifyNumber(macroData6) + "%"
+                    ? "-"
+                    : indicator6.includes("Rate") ||
+                      indicator6 === "Consumer Price Index" ||
+                      indicator6 === "Government Debt to GDP"
+                    ? macroData6 < 0
+                      ? "-" + simplifyNumber(macroData6) + "%"
+                      : simplifyNumber(macroData6) + "%"
+                    : macroData6 < 0
+                    ? "-$" + simplifyNumber(macroData6)
                     : "$" + simplifyNumber(macroData6)}
                 </Typography>
                 {getPercentageChange(macroData6, prevMacroData6)}
