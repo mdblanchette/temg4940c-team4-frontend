@@ -1,15 +1,23 @@
-import { Box, Container, Grid } from "@mui/material";
+import { Box, Container, Grid, Typography } from "@mui/material";
 import { Layout as DashboardLayout } from "../layout/Layout";
 import Map from "../components/MainPage/Map";
 import WorldCredit from "../components/MainPage/WorldCredit";
 import MacroeconomicIndicators from "../components/MainPage/MacroeconomicIndicators";
 import BondInfoColumn from "../components/BondScreener/BondInfoColumn";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BondInfoTable from "../components/BondScreener/BondInfoTable";
 
 const Page = () => {
   const [selectedCountry, setSelectedCountry] = useState("Global");
+  const [dummyPortfolio, setDummyPortfolio] = useState();
   var country = "Global";
+
+  useEffect(() => {
+    // Perform localStorage action
+    const item = localStorage.getItem("portfolioList");
+    setDummyPortfolio(item);
+  }, []);
+
   return (
     <Box
       component="main"
@@ -35,7 +43,8 @@ const Page = () => {
             <WorldCredit selectedCountry={selectedCountry} />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <BondInfoTable />
+            <Typography>{dummyPortfolio}</Typography>
+            {/* <BondInfoTable /> */}
           </Grid>
         </Grid>
       </Container>

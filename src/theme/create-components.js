@@ -54,6 +54,9 @@ export function createComponents(config) {
           borderColor: "#007AF5",
           color: "#007AF5",
         },
+        primary: {
+          color: "#007AF5",
+        },
       },
     },
     MuiCard: {

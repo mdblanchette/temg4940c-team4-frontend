@@ -1,6 +1,7 @@
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
+import Dialog from "@mui/material/Dialog";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,15 +10,18 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import { Badge } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import DeblurIcon from "@mui/icons-material/Deblur";
 import AutoAwesomeMosaicIcon from "@mui/icons-material/AutoAwesomeMosaic";
 import TroubleshootIcon from "@mui/icons-material/Troubleshoot";
 import DataSaverOffIcon from "@mui/icons-material/DataSaverOff";
+import InAlertBonds from "../components/Alert/InAlertBonds";
 import { Link } from "@mui/material";
 import { useRouter } from "next/router";
 
@@ -106,6 +110,7 @@ const Drawer = styled(MuiDrawer, {
 export default function MiniDrawer({ children }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [openAlert, setOpenAlert] = React.useState(false);
   const router = useRouter();
   const currentURL = router.asPath;
 
@@ -116,6 +121,10 @@ export default function MiniDrawer({ children }) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  function handleClose(state) {
+    setOpenAlert(state);
+  }
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -147,6 +156,16 @@ export default function MiniDrawer({ children }) {
           >
             COVALENCE
           </Typography>
+          <IconButton
+            color="inherit"
+            onClick={() => setOpenAlert(true)}
+            aria-label="alertNotif"
+          >
+            {/* <NotificationsNoneOutlinedIcon /> */}
+            <Badge color="error" badgeContent={4}>
+              <NotificationsNoneOutlinedIcon />
+            </Badge>
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -234,6 +253,14 @@ export default function MiniDrawer({ children }) {
         <DrawerHeader />
         {children}
       </Box>
+      <Dialog
+        open={openAlert}
+        close={() => setOpenAlert(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <InAlertBonds handleCloseAlert={handleClose} />
+      </Dialog>
     </Box>
   );
 }

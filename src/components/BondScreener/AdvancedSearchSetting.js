@@ -19,10 +19,13 @@ import {
   getContrastRatio,
 } from "@mui/material/styles";
 
+//const keySearchSetting = "searchSetting";
+
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 import { CheckBox, CheckBoxOutlineBlank } from "@mui/icons-material";
+import { countryInfo } from "./BondInfoTable";
 
 import { useState } from "react";
 import dayjs from "dayjs";
@@ -240,45 +243,7 @@ export default function AdvancedSetting({
     "C",
   ];
 
-  const oecdCountries = [
-    "All",
-    "Australia",
-    "Austria",
-    "Belgium",
-    "Canada",
-    "Chile",
-    "Czech Republic",
-    "Denmark",
-    "Estonia",
-    "Finland",
-    "France",
-    "Germany",
-    "Greece",
-    "Hungary",
-    "Iceland",
-    "Ireland",
-    "Israel",
-    "Italy",
-    "Japan",
-    "Korea",
-    "Latvia",
-    "Lithuania",
-    "Luxembourg",
-    "Mexico",
-    "Netherlands",
-    "New Zealand",
-    "Norway",
-    "Poland",
-    "Portugal",
-    "Slovak Republic",
-    "Slovenia",
-    "Spain",
-    "Sweden",
-    "Switzerland",
-    "Turkey",
-    "United Kingdom",
-    "United States",
-  ];
+  const countryNames = countryInfo.map((country) => country.name);
 
   const bondIssuers = [
     "All",
@@ -306,7 +271,7 @@ export default function AdvancedSetting({
 
   // state of variables shown on the Advanced Search card
   const [rateMigration, setRateMigration] = useState([0, 100]);
-  const [changeSpread, setChangeSpread] = useState([0, 100]);
+  const [changeSpread, setChangeSpread] = useState([0, 1000]);
   const [liquidity, setLiquidity] = useState([0, 10]);
   const [issueDate, setIssueDate] = useState(dayjs("1990-01-01").format());
   const [matureDate, setMatureDate] = useState(dayjs("2050-01-01").format());
@@ -372,13 +337,17 @@ export default function AdvancedSetting({
       Rating: creditRate,
       Country: country,
       Outstanding: liquidity,
-      //IssueDate: dayjs(),
-      //MatureDate: dayjs(),
-      //Maturity: 30,
+      IssueDate: issueDate,
+      MatureDate: matureDate,
+      FinalRating: finalRating,
+      MigrationProbability: rateMigration,
       CouponRate: couponRate,
+      SpreadChange: changeSpread,
+      ChangeDirection: spreadDirection,
     };
 
     handleUpdate(updatedFilter);
+    //localStorage.setItem(keySearchSetting, JSON.stringify(updatedFilter))
   }
 
   return (
@@ -395,7 +364,7 @@ export default function AdvancedSetting({
             />
             <AddColumn
               Title="Country"
-              Options={oecdCountries}
+              Options={countryNames}
               inputValue={country}
               handleChange={(items) => setCountry(items)}
             />

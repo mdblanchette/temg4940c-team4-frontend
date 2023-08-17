@@ -32,45 +32,45 @@ export default function BondPredictionCard({ predictionData }) {
   return (
     <Card sx={{ bgcolor: "#F1F8FF" }}>
       <CardHeader
-        action={
-          <TextField
-            select
-            defaultValue={"Today"}
-            size="small"
-            variant="standard"
-          >
-            {time_period.map((option) => (
-              <MenuItem key={option} value={option}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        }
-        title="Bond Prediction"
+        // action={
+        //   <TextField
+        //     select
+        //     defaultValue={"Today"}
+        //     size="small"
+        //     variant="standard"
+        //   >
+        //     {time_period.map((option) => (
+        //       <MenuItem key={option} value={option}>
+        //         {option}
+        //       </MenuItem>
+        //     ))}
+        //   </TextField>
+        // }
+        title="Bond Prediction for Year 2024"
       />
 
       <CardContent>
         <Stack spacing={4}>
           <Grid container>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <Stack spacing={1}>
-                <Typography>Credit Rating Migration</Typography>
+                <Typography>Probability of Credit Rating Migration</Typography>
                 <Typography
                   variant="h5"
-                  sx={{
-                    color:
-                      predictionData.ratingMigration > 0
-                        ? "#0EA371"
-                        : "#DC4A41",
-                  }}
+                  // sx={{
+                  //   color:
+                  //     predictionData.ratingMigration > 0
+                  //       ? "#0EA371"
+                  //       : "#DC4A41",
+                  // }}
                 >
-                  {predictionData.ratingMigration > 0 ? "+" : ""}
+                  {/* {predictionData.ratingMigration > 0 ? "+" : ""} */}
                   {predictionData.ratingMigration.toFixed(2)}
                   {"%"}
                 </Typography>
               </Stack>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <Stack spacing={1}>
                 <Typography>Target Rating</Typography>
                 <Typography variant="h5">
@@ -78,9 +78,9 @@ export default function BondPredictionCard({ predictionData }) {
                 </Typography>
               </Stack>
             </Grid>
-            <Grid item xs={3}>
+            <Grid item xs={4}>
               <Stack spacing={1}>
-                <Typography>Spread Change</Typography>
+                <Typography>Spread Change from Latest Data</Typography>
                 <Typography
                   variant="h5"
                   sx={{
@@ -94,7 +94,7 @@ export default function BondPredictionCard({ predictionData }) {
                 </Typography>
               </Stack>
             </Grid>
-            <Grid item xs={3}>
+            {/* <Grid item xs={3}>
               <Stack spacing={1}>
                 <Typography>Confidence Level</Typography>
                 <Typography variant="h5">
@@ -102,12 +102,12 @@ export default function BondPredictionCard({ predictionData }) {
                   {"%"}
                 </Typography>
               </Stack>
-            </Grid>
+            </Grid> */}
           </Grid>
 
           <Typography>
             {" "}
-            Average credit rating and price correlation:{" "}
+            Average Confidence Level:{" "}
             <Typography component="span" fontWeight="bold">
               {predictionData.priceCorrelation.toFixed(2)}%
             </Typography>

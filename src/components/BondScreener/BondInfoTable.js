@@ -26,7 +26,31 @@ import {
 import { useState, useEffect, memo, useRef } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
-import AlertSetting from "../AlertSetting";
+import AlertSetting from "../Alert/AlertSetting";
+
+const ratingToNominalValue = {
+  Aaa: 1,
+  Aa1: 2,
+  Aa2: 3,
+  Aa3: 4,
+  A1: 5,
+  A2: 6,
+  A3: 7,
+  Baa1: 8,
+  Baa2: 9,
+  Baa3: 10,
+  Ba1: 11,
+  Ba2: 12,
+  Ba3: 13,
+  B1: 14,
+  B2: 15,
+  B3: 16,
+  Caa1: 17,
+  Caa2: 18,
+  Caa3: 19,
+  Ca: 20,
+  C: 21,
+}; // helper function for calculating prediction data
 
 function isOverflown(element) {
   return (
@@ -137,47 +161,79 @@ function renderCellExpand(params) {
   );
 }
 
-export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
-  const countryInfo = [
-    { name: "Australia", code: "AUS" },
-    { name: "Austria", code: "AUT" },
-    { name: "Belgium", code: "BEL" },
-    { name: "Canada", code: "CAN" },
-    { name: "Chile", code: "CHL" },
-    { name: "Costa Rica", code: "CRI" },
-    { name: "Czechia", code: "CZE" },
-    { name: "Denmark", code: "DNK" },
-    { name: "Estonia", code: "EST" },
-    { name: "Finland", code: "FIN" },
-    { name: "France", code: "FRA" },
-    { name: "Germany", code: "DEU" },
-    { name: "Greece", code: "GRC" },
-    { name: "Hungary", code: "HUN" },
-    { name: "Iceland", code: "ISL" },
-    { name: "Ireland", code: "IRL" },
-    { name: "Israel", code: "ISR" },
-    { name: "Italy", code: "ITA" },
-    { name: "Japan", code: "JPN" },
-    { name: "Korea", code: "KOR" },
-    { name: "Latvia", code: "LVA" },
-    { name: "Lithuania", code: "LTU" },
-    { name: "Luxembourg", code: "LUX" },
-    { name: "Mexico", code: "MEX" },
-    { name: "Netherlands", code: "NLD" },
-    { name: "New Zealand", code: "NZL" },
-    { name: "Norway", code: "NOR" },
-    { name: "Poland", code: "POL" },
-    { name: "Portugal", code: "PRT" },
-    { name: "Slovakia", code: "SVK" },
-    { name: "Slovenia", code: "SVN" },
-    { name: "Spain", code: "ESP" },
-    { name: "Sweden", code: "SWE" },
-    { name: "Switzerland", code: "CHE" },
-    { name: "Turkey", code: "TUR" },
-    { name: "United Kingdom", code: "GBR" },
-    { name: "United States of America", code: "USA" },
-  ];
+function renderCellHighlight(params) {
+  if (params.value === "N/A") {
+    return <div>{params.value}</div>;
+  }
 
+  const predictedRating = ratingToNominalValue[params.value];
+  let currentRating = params.row.RecentBondRating;
+  currentRating =
+    ratingToNominalValue[currentRating === "AA (low)" ? "AA" : currentRating];
+
+  const cellStyle = {
+    color: predictedRating <= currentRating ? "#0EA371" : "#DC4A41",
+  };
+
+  return <div style={cellStyle}>{params.value}</div>;
+}
+
+function renderCellValue(params) {
+  if (isNaN(params.value)) {
+    return <div>N/A</div>;
+  }
+
+  const cellStyle = {
+    color: params.value >= 0 ? "#0EA371" : "#DC4A41",
+  };
+
+  return <div style={cellStyle}>{params.value} bp</div>;
+}
+
+export const countryInfo = [
+  { name: "Australia", code: "AUS" },
+  { name: "Austria", code: "AUT" },
+  { name: "Belgium", code: "BEL" },
+  { name: "Canada", code: "CAN" },
+  { name: "Chile", code: "CHL" },
+  { name: "Costa Rica", code: "CRI" },
+  { name: "Czechia", code: "CZE" },
+  { name: "Denmark", code: "DNK" },
+  { name: "Estonia", code: "EST" },
+  { name: "Finland", code: "FIN" },
+  { name: "France", code: "FRA" },
+  { name: "Germany", code: "DEU" },
+  { name: "Greece", code: "GRC" },
+  { name: "Hungary", code: "HUN" },
+  { name: "Iceland", code: "ISL" },
+  { name: "Ireland", code: "IRL" },
+  { name: "Israel", code: "ISR" },
+  { name: "Italy", code: "ITA" },
+  { name: "Japan", code: "JPN" },
+  { name: "Korea", code: "KOR" },
+  { name: "Latvia", code: "LVA" },
+  { name: "Lithuania", code: "LTU" },
+  { name: "Luxembourg", code: "LUX" },
+  { name: "Mexico", code: "MEX" },
+  { name: "Netherlands", code: "NLD" },
+  { name: "New Zealand", code: "NZL" },
+  { name: "Norway", code: "NOR" },
+  { name: "Poland", code: "POL" },
+  { name: "Portugal", code: "PRT" },
+  { name: "Slovakia", code: "SVK" },
+  { name: "Slovenia", code: "SVN" },
+  { name: "Spain", code: "ESP" },
+  { name: "Sweden", code: "SWE" },
+  { name: "Switzerland", code: "CHE" },
+  { name: "Turkey", code: "TUR" },
+  { name: "United Kingdom", code: "GBR" },
+  { name: "United States of America", code: "USA" },
+];
+
+const keyAlertSetting = "alertSetting";
+const keyPortfolioList = "portfolioList";
+
+export default function BondInfoTable({ dataBonds }) {
   function getCountryNameFromCode(code) {
     const country = countryInfo.find((country) => country.code === code);
     return country ? country.name : null;
@@ -188,30 +244,6 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
     return country ? country.code : null;
   }
 
-  const ratingToNominalValue = {
-    Aaa: 1,
-    Aa1: 2,
-    Aa2: 3,
-    Aa3: 4,
-    A1: 5,
-    A2: 6,
-    A3: 7,
-    Baa1: 8,
-    Baa2: 9,
-    Baa3: 10,
-    Ba1: 11,
-    Ba2: 12,
-    Ba3: 13,
-    B1: 14,
-    B2: 15,
-    B3: 16,
-    Caa1: 17,
-    Caa2: 18,
-    Caa3: 19,
-    Ca: 20,
-    C: 21,
-  };
-
   const [alertSetting, setAlertSetting] = useState({
     Indicator: "Based on Predicted Rating Migration",
     valueSpread: [0, 1000],
@@ -221,11 +253,74 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
   });
 
   const [isBondAdded, setIsBondAdded] = useState(false);
-  const portfolioOption = ["Portfolio A", "Portfolio B", "New Portfolio"];
-  const [chosenBond, setChosenBond] = useState();
-  const [displayedBond, setDisplayedBond] = useState([]);
-  const apiEndPoint = "http://localhost:3500/";
+  const portfolioOption = ["A", "B", "C", "New"];
+  const [chosenPortfolio, setChosenPortfolio] = useState("A");
+  const [chosenBond, setChosenBond] = useState("");
   const [openAlertModal, setOpenAlertModal] = useState(false);
+  const [listPortfolio, setListPortfolio] = useState({
+    A: ["44658909176", "15628972515"],
+    B: ["46633294394", "44658909176"],
+    C: ["15628972515"],
+  });
+
+  useEffect(() => {
+    const storedAlertSetting = localStorage.getItem(keyAlertSetting);
+    if (storedAlertSetting) {
+      setAlertSetting(JSON.parse(storedAlertSetting));
+    } else {
+      setAlertSetting(alertSetting);
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedPortfolio = localStorage.getItem(keyPortfolioList);
+    if (storedPortfolio) {
+      setListPortfolio(JSON.parse(storedPortfolio));
+    } else {
+      setListPortfolio(listPortfolio);
+    }
+  }, []);
+
+  // if new bond added to portfolio
+  // useEffect(() => {
+  //   if (
+  //     chosenBond?.BondID &&
+  //     !listPortfolio[chosenPortfolio]?.includes(chosenBond?.BondID)
+  //   ) {
+  //     console.log("ID: ", chosenBond.BondID);
+  //     const updatedList = {
+  //       ...listPortfolio,
+  //       [chosenPortfolio]: [
+  //         ...(listPortfolio[chosenPortfolio] ?? []),
+  //         chosenBond.BondID,
+  //       ],
+  //     };
+
+  //     localStorage.setItem(keyPortfolioList, JSON.stringify(updatedList));
+  //     console.log("PORTFOLIO LIST: ", updatedList);
+  //   }
+  // }, [chosenPortfolio]);
+
+  function SaveBond() {
+    if (
+      chosenBond &&
+      !listPortfolio[chosenPortfolio]?.includes(chosenBond?.BondID)
+    ) {
+      console.log("ID: ", chosenBond.BondID);
+      const updatedList = {
+        ...listPortfolio,
+        [chosenPortfolio]: [
+          ...(listPortfolio[chosenPortfolio] ?? []),
+          chosenBond.BondID,
+        ],
+      };
+
+      localStorage.setItem(keyPortfolioList, JSON.stringify(updatedList));
+      console.log("PORTFOLIO LIST: ", updatedList);
+    }
+    console.log("skip add");
+  }
+
   //dummy function for now, the idea is to get the value of the selected row/bond and later use it for Watchlist/other
   function handleAddRow(rowData) {
     //setSelectedRows((prevRows) => [...prevRows, rowData]);
@@ -262,7 +357,7 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
               <Grid item xs={6}>
                 <Stack spacing={1}>
                   <Typography>Bond Issuer</Typography>
-                  <Typography variant="h5">{chosenBond.Issuer}</Typography>
+                  <Typography variant="h5">{chosenBond.IssuerName}</Typography>
                 </Stack>
               </Grid>
 
@@ -270,7 +365,9 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
                 <Stack spacing={1}>
                   <Typography>Bond Rating</Typography>
                   <Typography variant="h5">
-                    {chosenBond.MoodysRating ? chosenBond.MoodysRating : "N/A"}
+                    {chosenBond.RecentBondRating
+                      ? chosenBond.RecentBondRating
+                      : "N/A"}
                   </Typography>
                 </Stack>
               </Grid>
@@ -280,14 +377,24 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
               <Typography>Add to </Typography>
               <TextField select size="small" variant="standard">
                 {portfolioOption.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
+                  <MenuItem
+                    key={option}
+                    value={option}
+                    onClick={() => setChosenPortfolio(option)}
+                  >
+                    Portfolio {option}
                   </MenuItem>
                 ))}
               </TextField>
             </Stack>
 
-            <Button onClick={handleClickSetting} variant="contained">
+            <Button
+              onClick={() => {
+                SaveBond();
+                handleClickSetting();
+              }}
+              variant="contained"
+            >
               Save Bond
             </Button>
           </Stack>
@@ -304,217 +411,61 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
     setOpenAlertModal(state);
   }
 
-  const rowStyle = (params) => {
+  const getRowClassName = (params) => {
     // will be changed later
     const indicator =
       alertSetting.Indicator === "Based on Predicted Rating Migration"
-        ? [params.row.MoodysRating, params.row.CouponRate]
-        : params.row.CouponRate;
+        ? [params.row.PredictedRating, params.row.PredictionProbability]
+        : params.row.SpreadDelta;
 
-    // Apply conditional styling based on the 'status' property
-    if (
-      alertSetting.Indicator === "Based on Predicted Rating Migration" &&
-      alertSetting.chosenRatingTarget.includes(indicator[0]) &&
-      indicator[1] > alertSetting.migrationProbability[0] &&
-      indicator[1] < alertSetting.migrationProbability[1]
-    ) {
-      return { backgroundColor: "#F1F8FF" };
+    let isHighlighted = false;
+
+    if (alertSetting.Indicator === "Based on Predicted Rating Migration") {
+      if (
+        alertSetting.chosenRatingTarget.includes(indicator[0]) &&
+        indicator[1] * 100 >= alertSetting.migrationProbability[0] &&
+        indicator[1] * 100 <= alertSetting.migrationProbability[1]
+      ) {
+        isHighlighted = true;
+      }
     } else if (
-      alertSetting.Indicator !== "Based on Predicted Rating Migration" &&
-      indicator > alertSetting.valueSpread[0] &&
-      indicator < alertSetting.valueSpread[1]
+      !isNaN(indicator) &&
+      Math.abs(indicator) > alertSetting.valueSpread[0] &&
+      Math.abs(indicator) < alertSetting.valueSpread[1]
     ) {
-      return { backgroundColor: "#F1F8FF" };
-    } else {
-      return {}; // default
+      if (
+        alertSetting.chosenAlertDirection.includes("Up") &&
+        alertSetting.chosenAlertDirection.includes("Down")
+      ) {
+        isHighlighted = true;
+      } else if (
+        alertSetting.chosenAlertDirection.includes("Up") &&
+        !alertSetting.chosenAlertDirection.includes("Down") &&
+        indicator > 0
+      ) {
+        // if spread goes up
+        isHighlighted = true;
+      } else if (
+        !alertSetting.chosenAlertDirection.includes("Up") &&
+        alertSetting.chosenAlertDirection.includes("Down") &&
+        indicator < 0
+      ) {
+        isHighlighted = true;
+      }
     }
+
+    // return isHighlighted
+    //   ? `super-app-theme--Alert${value >= 0 ? "Up" : "Down"}`
+    //   : "";
+
+    return isHighlighted ? `super-app-theme--Alerted` : "";
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        //const response = await fetch(apiEndPoint + "bond");
-        // if (!response.ok) {
-        //   throw new Error("Failed to fetch data from the API.");
-        // }
-        // const data = await response.json();
-
-        const retrievedID = ["44658909176", "46633294394", "15628972515"];
-
-        const requests = retrievedID.map((url) =>
-          fetch(apiEndPoint + "bond/" + url).then((response) => response.json())
-        );
-        const data = await Promise.all(requests);
-
-        // Combine all objects into a single array
-        const rows = data.flatMap((obj) => Object.values(obj));
-
-        console.log(rows);
-        // var normalizedData = rows.map(function (obj) {
-        //   var normalizedObj = {};
-
-        //   for (var key in obj) {
-        //     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        //       var normalizedKey = key.trim();
-        //       if (normalizedKey === "﻿BondID") normalizedKey = "BondID"; // Correcting the property name
-        //       normalizedObj[normalizedKey] = obj[key];
-        //     }
-        //   }
-
-        //   // if (
-        //   //   normalizedObj.BondID === "46633294394" ||
-        //   //   normalizedObj.BondID === "44658909176"
-        //   // ) {
-        //   //   console.log(normalizedObj);
-        //   // }
-
-        //   return normalizedObj;
-        // });
-
-        setDisplayedBond(rows);
-        console.log("displayed bond: ", rows);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  // useEffect(() => {
-  //   // whenever search filter is updated -> retrieve bond datas -> apply filter from Advanced Search
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch(apiEndPoint + "bond");
-  //       if (!response.ok) {
-  //         throw new Error("Failed to fetch data from the API.");
-  //       }
-  //       const data = await response.json();
-  //       console.log(data);
-
-  //       var normalizedData = data.map(function (obj) {
-  //         var normalizedObj = {};
-
-  //         for (var key in obj) {
-  //           if (Object.prototype.hasOwnProperty.call(obj, key)) {
-  //             var normalizedKey = key.trim();
-  //             if (normalizedKey === "﻿BondID") normalizedKey = "BondID"; // Correcting the property name
-  //             normalizedObj[normalizedKey] = obj[key];
-  //           }
-  //         }
-
-  //         return normalizedObj;
-  //       });
-
-  //       // filtering process
-  //       var filteredData = normalizedData.filter((bond) => {
-  //         if (
-  //           !searchFilter.Issuer.includes("All") &&
-  //           !searchFilter.Issuer.includes(bond.Issuer)
-  //         ) {
-  //           return false;
-  //         }
-
-  //         // Check if the rating matches the search filter
-  //         if (
-  //           !searchFilter.Rating.includes("All") &&
-  //           !searchFilter.Rating.includes(bond.MoodysRating)
-  //         ) {
-  //           return false;
-  //         }
-
-  //         // Check if the country matches the search filter
-  //         if (
-  //           !searchFilter.Country.includes("All") &&
-  //           !searchFilter.Country.includes(
-  //             getCountryNameFromCode(bond["Company Headquarter"])
-  //           )
-  //         ) {
-  //           return false;
-  //         }
-
-  //         // Check if the outstanding amount falls within the range
-  //         // const outstanding = Math.ceil(parseFloat(bond.FaceOutstanding));
-  //         // if (
-  //         //   outstanding < parseFloat(searchFilter.Outstanding[0]) ||
-  //         //   outstanding > parseFloat(searchFilter.Outstanding[1])
-  //         // ) {
-  //         //   return false;
-  //         // }
-
-  //         // // Check if the issue date is after the specified date
-  //         // const issueDate = dayjs(bond.IssueDate, 'MM/DD/YYYY');
-  //         // if (issueDate.isBefore(searchFilter.IssueDate)) {
-  //         //   return false;
-  //         // }
-
-  //         // // Check if the maturity date is before the specified date
-  //         // const maturityDate = dayjs(bond.Maturity, 'MM/DD/YYYY');
-  //         // if (maturityDate.isAfter(searchFilter.MatureDate)) {
-  //         //   return false;
-  //         // }
-
-  //         // Check if the coupon rate falls within the range
-  //         const couponRate = parseFloat(bond.CouponRate);
-  //         if (
-  //           couponRate < parseFloat(searchFilter.CouponRate[0]) ||
-  //           couponRate > parseFloat(searchFilter.CouponRate[1])
-  //         ) {
-  //           return false;
-  //         }
-
-  //         // If all conditions pass, include the bond in the filtered list
-  //         return true;
-  //       });
-
-  //       setDisplayedBond(filteredData);
-
-  //       // prediction calculating process
-  //       // targetRating (with dummy value credit rating)
-  //       let targetRating = filteredData.map((item) =>
-  //         ratingToNominalValue[item.MoodysRating]
-  //           ? ratingToNominalValue[item.MoodysRating]
-  //           : 0
-  //       );
-  //       targetRating = targetRating.filter((num) => num !== 0);
-  //       const sumTargetRating = targetRating.reduce((acc, num) => acc + num, 0);
-  //       let averageTargetRating = sumTargetRating / targetRating.length;
-  //       for (const rating in ratingToNominalValue) {
-  //         if (
-  //           ratingToNominalValue[rating] === Math.round(averageTargetRating)
-  //         ) {
-  //           averageTargetRating = rating;
-  //           break;
-  //         }
-  //       }
-
-  //       //rating migration (dummy: CR)
-  //       let ratingMigration = filteredData.map((item) =>
-  //         item.CouponRate ? parseFloat(item.CouponRate) : 0
-  //       );
-  //       ratingMigration = ratingMigration.filter((num) => num !== 0);
-  //       const sumRatingMigration = ratingMigration.reduce(
-  //         (acc, num) => acc + num,
-  //         0
-  //       );
-  //       console.log("total: ", sumRatingMigration);
-
-  //       handlePredictionInfo({
-  //         ratingMigration: sumRatingMigration / ratingMigration.length,
-  //         targetRating: averageTargetRating,
-  //         spreadChange: sumRatingMigration / ratingMigration.length,
-  //         priceCorrelation: sumRatingMigration / ratingMigration.length,
-  //       });
-
-  //       console.log("search filter: ", searchFilter);
-  //       console.log("filtered data: ", displayedBond);
-  //     } catch (error) {
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [searchFilter]);
+  const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+    "& .super-app-theme--Alerted": {
+      backgroundColor: "#FBEDEC",
+    },
+  }));
 
   // useEffect(() => {
   //   const fetchBondPrices = async () => {
@@ -660,7 +611,7 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
       headerClassName: "super-app-theme--header",
     },
     {
-      field: "Company Headquarter",
+      field: "IssuerCountry",
       headerName: "Country",
       width: 180,
       align: "left",
@@ -678,7 +629,7 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
       },
     },
     {
-      field: "MoodysRating",
+      field: "RecentBondRating",
       headerName: "Credit Rating",
       width: 120,
       align: "left",
@@ -686,15 +637,93 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
       valueFormatter: (params) => (params.value ? params.value : "N/A"),
     },
     {
-      field: "Issuer",
+      field: "PredictedRating",
+      headerName: "Predicted Rating",
+      width: 150,
+      align: "left",
+      headerClassName: "super-app-theme--header",
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
+      renderCell: renderCellHighlight,
+    },
+    {
+      field: "PredictionProbability",
+      headerName: "Probability",
+      width: 100,
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value) * 100;
+      },
+      valueFormatter: (params) => {
+        if (params.value == null) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} %`;
+      },
+    },
+    {
+      field: "PredictedSpread",
+      headerName: "Predicted Spread",
+      width: 140,
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value);
+      },
+      valueFormatter: (params) => {
+        if (params.value == null) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} bp`;
+      },
+    },
+    {
+      field: "SpreadDelta",
+      headerName: "Spread Change",
+      width: 140,
+      align: "left",
+      type: "number",
+      renderCell: renderCellValue,
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value).toFixed(2);
+      },
+      valueFormatter: (params) => {
+        if (params.value == null) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} bp`;
+      },
+    },
+    {
+      field: "SpreadConfidence",
+      headerName: "Confidence",
+      width: 100,
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value).toFixed(2) * 100;
+      },
+      valueFormatter: (params) => {
+        if (params.value == null) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} %`;
+      },
+    },
+    {
+      field: "IssuerName",
       headerName: "Issuer",
-      width: 200,
+      width: 180,
       align: "left",
       headerClassName: "super-app-theme--header",
       renderCell: renderCellExpand,
     },
     {
-      field: "MoodyIssuerRating",
+      field: "IssuerRating",
       headerName: "Issuer Rating",
       width: 120,
       align: "left",
@@ -709,29 +738,7 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
       width: 120,
       headerClassName: "super-app-theme--header",
       valueGetter: (params) =>
-        params.value ? dayjs(params.value).format("DD/MM/YYYY") : null,
-      valueFormatter: (params) => {
-        try {
-          const date = new Date(params.value);
-          if (date instanceof Date && !isNaN(date.getTime())) {
-            return `${params.value.toLocaleString()}`;
-          } else {
-            return "N/A";
-          }
-        } catch (error) {
-          return "N/A";
-        }
-      },
-    }, //DD/MM/YYY format
-    {
-      field: "Maturity",
-      headerName: "Mature Date",
-      type: "date",
-      align: "left",
-      width: 120,
-      headerClassName: "super-app-theme--header",
-      valueGetter: (params) =>
-        params.value ? dayjs(params.value).format("DD/MM/YYYY") : null,
+        params.value ? dayjs(params.value).format("YYYY-MM-DD") : null,
       valueFormatter: (params) => {
         try {
           const date = new Date(params.value);
@@ -746,31 +753,87 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
       },
     },
     {
-      field: "CouponFrequency",
-      headerName: "Maturity",
+      field: "MaturityDate",
+      headerName: "Mature Date",
+      type: "date",
+      align: "left",
+      width: 120,
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) =>
+        params.value ? dayjs(params.value).format("YYYY-MM-DD") : null,
+      valueFormatter: (params) => {
+        try {
+          const date = new Date(params.value);
+          if (date instanceof Date && !isNaN(date.getTime())) {
+            return `${params.value.toLocaleString()}`;
+          } else {
+            return "N/A";
+          }
+        } catch (error) {
+          return "N/A";
+        }
+      },
+    },
+    // {
+    //   field: "CouponFrequency",
+    //   headerName: "Maturity",
+    //   type: "number",
+    //   align: "left",
+    //   headerClassName: "super-app-theme--header",
+    //   valueGetter: ({ row }) => {
+    //     if (!row.IssueDate || !row.Maturity) {
+    //       return null;
+    //     }
+    //     return (
+    //       (dayjs(row.Maturity) - dayjs(row.IssueDate)) /
+    //       (1000 * 60 * 60 * 24 * 365)
+    //     );
+    //   },
+    //   valueFormatter: (params) => {
+    //     if (params.value == null || params.value == undefined) {
+    //       return "N/A";
+    //     } else {
+    //       if (params.value < 1) {
+    //         return "< 1 year";
+    //       } else {
+    //         return `${Math.round(params.value).toLocaleString()} years`;
+    //       }
+    //     }
+    //   },
+    // },
+    {
+      field: "BondYTMAtPriceDate",
+      headerName: "YTM",
+      with: 80,
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value).toFixed(2);
+      },
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
+    },
+    {
+      field: "Bid",
+      headerName: "Bid Price",
       type: "number",
       align: "left",
       headerClassName: "super-app-theme--header",
-      valueGetter: ({ row }) => {
-        if (!row.IssueDate || !row.Maturity) {
-          return null;
-        }
-        return (
-          (dayjs(row.Maturity) - dayjs(row.IssueDate)) /
-          (1000 * 60 * 60 * 24 * 365)
-        );
+      valueGetter: (params) => {
+        return parseFloat(params.value);
       },
-      valueFormatter: (params) => {
-        if (params.value == null || params.value == undefined) {
-          return "N/A";
-        } else {
-          if (params.value < 1) {
-            return "< 1 year";
-          } else {
-            return `${Math.round(params.value).toLocaleString()} years`;
-          }
-        }
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
+    },
+    {
+      field: "Ask",
+      headerName: "Ask Price",
+      type: "number",
+      align: "left",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value);
       },
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
     },
     {
       field: "CouponRate",
@@ -830,7 +893,6 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
           <IconButton
             onClick={() => {
               setOpenAlertModal(true);
-              console.log("displayed bonds: ", displayedBond);
             }}
           >
             <AddAlertOutlined />
@@ -838,9 +900,6 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
         }
         title="Basic Information"
       />
-      {/* {searchFilter && searchFilter.Country && (
-        <Typography>{searchFilter.Country}</Typography>
-      )} */}
       <CardContent>
         <Box
           sx={{
@@ -852,9 +911,9 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
             },
           }}
         >
-          <DataGrid
+          <StyledDataGrid
             //loading={!displayedBond.length}
-            rows={displayedBond}
+            rows={dataBonds}
             columns={categories}
             disableRowSelectionOnClick
             getRowId={(row) => row.BondID}
@@ -862,10 +921,21 @@ export default function BondInfoTable({ searchFilter, handlePredictionInfo }) {
             renderCell
             initialState={{
               pagination: { paginationModel: { pageSize: 10 } },
-              columns: { columnVisibilityModel: { BondID: false } },
+              columns: {
+                columnVisibilityModel: {
+                  BondID: false,
+                  IssueDate: false,
+                  MaturityDate: false,
+                  PredictedSpread: false,
+                  Bid: false,
+                  Ask: false,
+                  IssuerRating: false,
+                  BondYTMAtPriceDate: false,
+                },
+              },
             }}
             pageSizeOptions={[10, 25, 50, 100]}
-            getRowClassName={rowStyle}
+            getRowClassName={getRowClassName}
             headerClassName="column-header"
             headerCellClassName="column-header"
           />
