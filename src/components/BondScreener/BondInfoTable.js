@@ -613,7 +613,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "IssuerCountry",
       headerName: "Country",
-      width: 180,
+      width: 200,
       align: "left",
       headerClassName: "super-app-theme--header",
       renderCell: renderCellExpand,
@@ -665,7 +665,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "PredictedSpread",
       headerName: "Predicted Spread",
-      width: 140,
+      width: 150,
       align: "left",
       type: "number",
       headerClassName: "super-app-theme--header",
@@ -673,7 +673,7 @@ export default function BondInfoTable({ dataBonds }) {
         return parseFloat(params.value);
       },
       valueFormatter: (params) => {
-        if (params.value == null) {
+        if (params.value == null || isNaN(params.value)) {
           return "N/A";
         }
         return `${params.value.toLocaleString()} bp`;
@@ -708,7 +708,7 @@ export default function BondInfoTable({ dataBonds }) {
         return parseFloat(params.value).toFixed(2) * 100;
       },
       valueFormatter: (params) => {
-        if (params.value == null) {
+        if (params.value == null || isNaN(params.value)) {
           return "N/A";
         }
         return `${params.value.toLocaleString()} %`;
@@ -717,7 +717,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "IssuerName",
       headerName: "Issuer",
-      width: 180,
+      width: 220,
       align: "left",
       headerClassName: "super-app-theme--header",
       renderCell: renderCellExpand,
@@ -804,7 +804,6 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "BondYTMAtPriceDate",
       headerName: "YTM",
-      with: 80,
       align: "left",
       type: "number",
       headerClassName: "super-app-theme--header",
@@ -926,11 +925,8 @@ export default function BondInfoTable({ dataBonds }) {
                   BondID: false,
                   IssueDate: false,
                   MaturityDate: false,
-                  PredictedSpread: false,
                   Bid: false,
                   Ask: false,
-                  IssuerRating: false,
-                  BondYTMAtPriceDate: false,
                 },
               },
             }}
