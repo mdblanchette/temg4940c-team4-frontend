@@ -12,19 +12,26 @@ const time_period = [
 ];
 
 export default function WorldCredit({
-  oecdCountries,
-  selectedCountry,
   selectedCountryCode,
   selectedCountryFlag,
 }) {
-  const [sovereignRating, setSovereignRating] = useState("");
-  const [averageIssuerRating, setAverageIssuerRating] = useState("");
-  const [countryFlag, setCountryFlag] = useState("");
+  const [sovereignRating, setSovereignRating] = useState("N/A");
+  const [averageIssuerRating, setAverageIssuerRating] = useState("N/A");
+  const [averageCreditRatingMigration, setAverageCreditRatingMigration] =
+    useState("N/A");
 
   async function getCreditData(selectedCountryCode) {
     const fetch_link =
       "http://localhost:3500/macro/creditRating" + "/" + selectedCountryCode;
-    console.log(fetch_link);
+    const res = await fetch(fetch_link);
+    const parsed_res = await res.json();
+    return parsed_res;
+  }
+
+  async function getPredictionData(selectedCountryCode) {
+    const fetch_link =
+      "http://localhost:3500/prediction/creditMigration2024/country/" +
+      selectedCountryCode;
     const res = await fetch(fetch_link);
     const parsed_res = await res.json();
     return parsed_res;
@@ -32,10 +39,28 @@ export default function WorldCredit({
 
   const renderCreditData = async (selectedCountryCode) => {
     const data = await getCreditData(selectedCountryCode);
+    const predictionData = await getPredictionData(selectedCountryCode);
 
     setSovereignRating(data["Moodys"]);
     setAverageIssuerRating(data["Average Issuer Rating"]);
+    const countryMigration =
+      predictionData["Yearly Average Credit Migration"] !== "N/A"
+        ? parseFloat(predictionData["Yearly Average Credit Migration"]).toFixed(
+            3
+          )
+        : "N/A";
+    setAverageCreditRatingMigration(countryMigration);
   };
+
+  function colorCode(value) {
+    if (value === "N/A" || selectedCountryCode === "Global") return "black";
+    value = parseFloat(value);
+    if (value >= 2) return "#009444";
+    else if (value >= 1) return "#8dc740";
+    else if (value >= 0) return "#edea42";
+    else if (value >= -1) return "#f46522";
+    else return "#ed1c25";
+  }
 
   useEffect(() => {
     renderCreditData(selectedCountryCode);
@@ -54,25 +79,36 @@ export default function WorldCredit({
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Credit Rating Migration</Typography>
-            <Typography variant="h5" color="green">
-              +20.1%
+            <Typography
+              variant="h5"
+              color={colorCode(averageCreditRatingMigration)}
+            >
+              {selectedCountryCode === "Global"
+                ? "-"
+                : averageCreditRatingMigration === "N/A"
+                ? "N/A"
+                : averageCreditRatingMigration + "%"}
             </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Sovereign Rating</Typography>
             <Typography variant="h5">
-              {sovereignRating.replace(/\s/g, "")}
+              {selectedCountryCode === "Global"
+                ? "-"
+                : sovereignRating.replace(/\s/g, "")}
             </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Predicted Spread Change</Typography>
             <Typography variant="h5" color={"red"}>
-              -520 bp
+              {selectedCountryCode === "Global" ? "-" : "-520 bp"}
             </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Average Issuer Rating</Typography>
-            <Typography variant="h5">{averageIssuerRating}</Typography>
+            <Typography variant="h5">
+              {selectedCountryCode === "Global" ? "-" : averageIssuerRating}
+            </Typography>
           </Grid>
           <Grid item xs={6}>
             <Typography>Prediction Confidence Level</Typography>
