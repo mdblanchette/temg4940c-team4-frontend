@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
+import BondSpreadChart from "./BondSpreadChart";
+import BondCreditRatingChart from "./BondCreditRatingChart";
 
 export default function BondBasicInfoCard({
   selectedRow,
@@ -116,7 +118,8 @@ export default function BondBasicInfoCard({
           }}
         >
           <Typography variant="h6">Bond Trends</Typography>
-          {/* Add your content for Bond Trends here */}
+          <BondSpreadChart />
+          <BondCreditRatingChart />
         </Box>
       </CardContent>
     </Card>
