@@ -12,22 +12,14 @@ export default function CountryInfoCard({ selectedRow, oecdCountries }) {
   useEffect(() => {
     if (!selectedRow) return;
     const country = oecdCountries.find((c) => c.name === selectedRow.country);
-    if (!country) {
-      setCountryInfo({
-        flag: "",
-        name: "Country does not exist",
-        sovereignRating: "N/A", // SET UP FETCHING WHEN READY
-        averageIssuerRating: "N/A", // SET UP FETCHING WHEN READY
-      });
-    }
-    else {
+    if (!country) return;
+
     setCountryInfo({
       flag: country.flag,
       name: country.name,
       sovereignRating: "N/A", // SET UP FETCHING WHEN READY
       averageIssuerRating: "N/A", // SET UP FETCHING WHEN READY
     });
-}
   }, [selectedRow, oecdCountries]);
 
   return (

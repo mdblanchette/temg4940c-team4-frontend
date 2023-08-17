@@ -14,19 +14,9 @@ import {
   TableRow,
   Paper,
   Button,
-  Dialog,
-  CardHeader,
-  Box,
-  TextField,
 } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
+import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
-import {
-  AddCircleOutlined,
-  CloseOutlined,
-  RemoveCircleOutlineOutlined,
-  RemoveCircleOutlined,
-} from "@mui/icons-material";
 
 export default function WatchlistSideBar({
   selectedRow,
@@ -43,10 +33,7 @@ export default function WatchlistSideBar({
   setMaturityAllocationLabels,
 }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [openPortfolioSettings, setOpenPortfolioSettings] = useState(false);
-  const [settingSelectedPortfolio, setSettingSelectedPortfolio] = useState();
 
-  // Filter table data based on search query
   const filteredTableData = dummyTableData[selectedPortfolio].filter((row) => {
     const lowerSearchQuery = searchQuery.toLowerCase();
     return (
@@ -108,24 +95,6 @@ export default function WatchlistSideBar({
     setMaturityAllocationData(maturityCounts);
   };
 
-  function handleClosePortfolioSettings() {
-    setOpenPortfolioSettings(false);
-  }
-
-  function deletePortfolio() {
-    delete dummyTableData[selectedPortfolio];
-    setSelectedPortfolio(Object.keys(dummyTableData)[0]);
-    setOpenPortfolioSettings(false);
-  }
-
-  function deleteBond(deletingRow) {
-    const newTableData = dummyTableData[selectedPortfolio].filter(
-      (row) => row.id !== deletingRow.id
-    );
-    dummyTableData[selectedPortfolio] = newTableData;
-    setSelectedRow(-1);
-  }
-
   useEffect(() => {
     renderPortfolioGraphs(
       setPortfolioAllocationData,
@@ -167,65 +136,16 @@ export default function WatchlistSideBar({
               </MenuItem>
             ))}
           </Select>
-          <Dialog
-            open={openPortfolioSettings}
-            onClose={() => handleClosePortfolioSettings}
-          >
-            <Card>
-              <CardHeader
-                action={
-                  <IconButton onClick={handleClosePortfolioSettings}>
-                    <CloseOutlined />
-                  </IconButton>
-                }
-                style={{ borderBottom: "1px solid #ccc", marginBottom: 0 }}
-                title={"Portfolio Settings"}
-              />
-              <CardContent>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <Select
-                    variant="outlined"
-                    fullWidth
-                    style={{ height: "30px", marginTop: 0 }}
-                    value={selectedPortfolio}
-                    onChange={(e) => {
-                      setSettingSelectedPortfolio(e.target.value);
-                    }}
-                  >
-                    {Object.keys(dummyTableData).map((key) => (
-                      <MenuItem key={key} value={key}>
-                        Portfolio {parseInt(key)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  <Button
-                    sx={{ color: "red", marginTop: "10px" }}
-                    onClick={() => deletePortfolio(settingSelectedPortfolio)}
-                    disabled={Object.keys(dummyTableData).length === 1}
-                  >
-                    Delete Portfolio
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </Dialog>
           <IconButton
             color="primary"
             style={{
-              background: "#6466f1",
+              background: "blue",
               borderRadius: "5px",
               width: "30px",
               height: "30px",
             }}
-            onClick={() => setOpenPortfolioSettings(true)}
           >
-            <SettingsIcon style={{ color: "white" }} />
+            <AddIcon style={{ color: "white" }} />
           </IconButton>
         </div>
         <div
@@ -257,7 +177,21 @@ export default function WatchlistSideBar({
             </IconButton>
           </div>
         </div>
-
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "5px",
+            marginBottom: "30px",
+          }}
+        >
+          <Button variant="outlined" color="primary" style={{ width: "48%" }}>
+            Modify Portfolio
+          </Button>
+          <Button variant="outlined" color="secondary" style={{ width: "48%" }}>
+            Delete Portfolio
+          </Button>
+        </div>
         <TableContainer
           component={Paper}
           style={{
@@ -270,10 +204,9 @@ export default function WatchlistSideBar({
             <TableHead>
               <TableRow>
                 <TableCell style={{ width: "35%" }}>Name</TableCell>
-                <TableCell style={{ width: "35%" }}>ISSUER</TableCell>
-                <TableCell style={{ width: "5%" }}>RAT</TableCell>
-                <TableCell style={{ width: "15%" }}>MIG</TableCell>
-                <TableCell style={{ width: "10%" }} />
+                <TableCell style={{ width: "35%" }}>Issuer</TableCell>
+                <TableCell style={{ width: "15%" }}>Rating</TableCell>
+                <TableCell style={{ width: "15%" }}>Migration</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -295,11 +228,6 @@ export default function WatchlistSideBar({
                   <TableCell>{row.issuer}</TableCell>
                   <TableCell>{row.rating}</TableCell>
                   <TableCell>{row.migration}</TableCell>
-                  <TableCell>
-                    <IconButton onClick={() => deleteBond(row)}>
-                      <RemoveCircleOutlined sx={{ color: "#007AF5" }} />
-                    </IconButton>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
