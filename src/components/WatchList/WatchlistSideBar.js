@@ -80,10 +80,7 @@ export default function WatchlistSideBar({
       portfolioMaturityLabels.push(item.BondID);
     });
 
-    console.log(dummyTableData);
-
     setPortfolioData(portfolioData);
-    console.log("portfolio data:", portfolioData);
     setPortfolioAllocationLabels(portfolioAllocationLabels);
     // Get unique ratings so that there are no duplicates, sort them in increasing alphabetical order
     const uniqueRatingDataLabels = [...new Set(portfolioRatingData)].sort(
