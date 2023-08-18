@@ -34,13 +34,13 @@ export default function WatchlistSideBar({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredTableData = dummyTableData[selectedPortfolio].filter((row) => {
+  const filteredTableData = dummyTableData[selectedPortfolio]?.filter((row) => {
     const lowerSearchQuery = searchQuery.toLowerCase();
     return (
-      row.name.toLowerCase().includes(lowerSearchQuery) ||
-      row.issuer.toLowerCase().includes(lowerSearchQuery) ||
-      row.rating.toLowerCase().includes(lowerSearchQuery) ||
-      row.migration.toLowerCase().includes(lowerSearchQuery)
+      row.BondID.toLowerCase().includes(lowerSearchQuery) ||
+      row.IssuerName.toLowerCase().includes(lowerSearchQuery) ||
+      row.RecentBondRating.toLowerCase().includes(lowerSearchQuery) ||
+      row.PredictedRating.toLowerCase().includes(lowerSearchQuery)
     );
   });
 
@@ -60,16 +60,23 @@ export default function WatchlistSideBar({
     const portfolioRatingLabels = [];
     const portfolioMaturityData = [];
     const portfolioMaturityLabels = [];
-    dummyTableData[selectedPortfolio].map((item) => {
-      portfolioData.push(item.allocation);
-      portfolioAllocationLabels.push(item.name);
-      portfolioRatingData.push(item.rating);
-      portfolioRatingLabels.push(item.name);
-      portfolioMaturityData.push(item.maturity);
-      portfolioMaturityLabels.push(item.name);
+
+    dummyTableData[selectedPortfolio]?.map((item) => {
+      //portfolioData.push(item.allocation);
+      portfolioData.push(100 / dummyTableData[selectedPortfolio].length);
+      portfolioAllocationLabels.push(item.BondID);
+      portfolioRatingData.push(item.RecentBondRating);
+      portfolioRatingLabels.push(item.BondID);
+      portfolioMaturityData.push(
+        parseFloat(item.BondYTMAtPriceDate).toFixed(2)
+      );
+      portfolioMaturityLabels.push(item.BondID);
     });
 
+    console.log(dummyTableData);
+
     setPortfolioData(portfolioData);
+    console.log("portfolio data:", portfolioData);
     setPortfolioAllocationLabels(portfolioAllocationLabels);
     // Get unique ratings so that there are no duplicates, sort them in increasing alphabetical order
     const uniqueRatingDataLabels = [...new Set(portfolioRatingData)].sort(
@@ -132,7 +139,8 @@ export default function WatchlistSideBar({
           >
             {Object.keys(dummyTableData).map((key) => (
               <MenuItem key={key} value={key}>
-                Portfolio {parseInt(key)}
+                {"Portfolio "}
+                {key}
               </MenuItem>
             ))}
           </Select>
@@ -185,10 +193,10 @@ export default function WatchlistSideBar({
             marginBottom: "30px",
           }}
         >
-          <Button variant="outlined" color="primary" style={{ width: "48%" }}>
+          <Button variant="contained" style={{ width: "48%" }}>
             Modify Portfolio
           </Button>
-          <Button variant="outlined" color="secondary" style={{ width: "48%" }}>
+          <Button variant="outlined" style={{ width: "48%" }}>
             Delete Portfolio
           </Button>
         </div>
@@ -203,31 +211,41 @@ export default function WatchlistSideBar({
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell style={{ width: "35%" }}>Name</TableCell>
-                <TableCell style={{ width: "35%" }}>Issuer</TableCell>
-                <TableCell style={{ width: "15%" }}>Rating</TableCell>
-                <TableCell style={{ width: "15%" }}>Migration</TableCell>
+                <TableCell style={{ width: "15%" }}>ID</TableCell>
+                <TableCell style={{ width: "25%" }}>Issuer</TableCell>
+                <TableCell style={{ width: "30%" }}>Current Rating</TableCell>
+                <TableCell style={{ width: "30%" }}>Predicted Rating</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredTableData.map((row) => (
+              {filteredTableData?.map((row) => (
                 <TableRow
-                  key={row.id}
+                  key={row.BondID}
                   onClick={() => onRowClick(row)}
                   style={{
                     cursor: "pointer",
                     backgroundColor:
-                      selectedRow.id === row.id ? "#d8d3f5" : "transparent",
+                      selectedRow.BondID === row.BondID
+                        ? "#E0F0FF"
+                        : "transparent",
                     "&:hover": {
                       backgroundColor:
-                        selectedRow.id === row.id ? "#d8d3f5" : "#f5f5f5",
+                        selectedRow.BondID === row.BondID
+                          ? "#E0F0FF"
+                          : "#f5f5f5",
                     },
                   }}
                 >
-                  <TableCell>{row.name}</TableCell>
-                  <TableCell>{row.issuer}</TableCell>
-                  <TableCell>{row.rating}</TableCell>
-                  <TableCell>{row.migration}</TableCell>
+                  <TableCell style={{ width: "15%" }}>{row.BondID}</TableCell>
+                  <TableCell style={{ width: "25%" }}>
+                    {row.IssuerName}
+                  </TableCell>
+                  <TableCell style={{ width: "30%" }}>
+                    {row.RecentBondRating}
+                  </TableCell>
+                  <TableCell style={{ width: "30%" }}>
+                    {row.PredictedRating}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

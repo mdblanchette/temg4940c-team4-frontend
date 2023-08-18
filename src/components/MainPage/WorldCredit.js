@@ -22,7 +22,9 @@ export default function WorldCredit({
 
   async function getCreditData(selectedCountryCode) {
     const fetch_link =
-      "http://localhost:3500/macro/creditRating" + "/" + selectedCountryCode;
+      "http://35.220.165.226/api/macro/creditRating" +
+      "/" +
+      selectedCountryCode;
     const res = await fetch(fetch_link);
     const parsed_res = await res.json();
     return parsed_res;
@@ -30,7 +32,7 @@ export default function WorldCredit({
 
   async function getPredictionData(selectedCountryCode) {
     const fetch_link =
-      "http://localhost:3500/prediction/creditMigration2024/country/" +
+      "http://35.220.165.226/api/prediction/creditMigration2024/country/" +
       selectedCountryCode;
     const res = await fetch(fetch_link);
     const parsed_res = await res.json();

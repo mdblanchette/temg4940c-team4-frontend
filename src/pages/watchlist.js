@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CssBaseline } from "@mui/material";
 import { Layout as DashboardLayout } from "../layout/Layout";
 import WatchlistSideBar from "../components/WatchList/WatchlistSideBar";
@@ -8,8 +8,10 @@ import PortfolioAllocationCard from "../components/WatchList/PortfolioAllocation
 import PortfolioPerformanceCard from "../components/WatchList/PortfolioPerformanceCard";
 import CountryInfoCard from "../components/WatchList/CountryInfoCard";
 
+const keyPortfolioList = "portfolioList";
+
 const dummyTableData = {
-  1: [
+  A: [
     {
       id: 1,
       name: "Item 1",
@@ -83,7 +85,7 @@ const dummyTableData = {
       predictedSpreadMovement: "5%",
     },
   ],
-  2: [
+  B: [
     {
       id: 5,
       name: "Item 5",
@@ -122,7 +124,7 @@ const dummyTableData = {
     },
     // Add more data as needed for Portfolio 2
   ],
-  3: [
+  C: [
     {
       id: 7,
       name: "Item 7",
@@ -258,10 +260,11 @@ const oecdCountries = [
   { flag: "🇬🇧", name: "United Kingdom", code: "GBR" },
   { flag: "🇺🇸", name: "United States of America", code: "USA" },
 ];
+const apiEndPoint = "http://35.220.165.226/api/";
 
 const Page = () => {
   const [selectedRow, setSelectedRow] = useState(-1);
-  const [selectedPortfolio, setSelectedPortfolio] = useState(1);
+  const [selectedPortfolio, setSelectedPortfolio] = useState("A");
   const [portfolioAllocationData, setPortfolioAllocationData] = useState([]);
   const [portfolioAllocationLabels, setPortfolioAllocationLabels] = useState(
     []
@@ -270,12 +273,73 @@ const Page = () => {
   const [ratingAllocationLabels, setRatingAllocationLabels] = useState([]);
   const [maturityAllocationData, setMaturityAllocationData] = useState([]);
   const [maturityAllocationLabels, setMaturityAllocationLabels] = useState([]);
+  const [listBondID, setListBondID] = useState({
+    A: ["44658909176", "15628972515"],
+    B: ["46633294394", "44658909176"],
+    C: ["15628972515"],
+  });
+  const [tableData, setTableData] = useState({});
 
   const handleRowClick = (rowData) => {
     setSelectedRow(rowData === selectedRow ? -1 : rowData);
     // Update portfolioAllocationData, portfolioAllocationLabels, ratingAllocationData,
     // ratingAllocationLabels, maturityAllocationData, and maturityAllocationLabels here
   };
+
+  // get BondID of each portfolio
+  useEffect(() => {
+    const storedPortfolio = localStorage.getItem(keyPortfolioList);
+    if (storedPortfolio) {
+      setListBondID(JSON.parse(storedPortfolio));
+    } else {
+      setListBondID(listBondID);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(apiEndPoint + "bond/all/withPred");
+        if (!response.ok) {
+          throw new Error("Failed to fetch data from the API.");
+        }
+        const data = await response.json();
+        console.log(data);
+
+        const newArray = Object.entries(listBondID).map(([key, bondIDs]) => {
+          const objects = bondIDs.map((bondID) => {
+            const foundBond = data.find((bond) => bond.BondID === bondID);
+
+            if (foundBond) {
+              return {
+                ...foundBond,
+              };
+            }
+
+            // Handle the case where a bond with the given ID is not found
+            return null;
+          });
+
+          return {
+            [key]: objects.filter((object) => object !== null),
+          };
+        });
+
+        const formattedData = newArray.reduce((acc, curr) => {
+          const [key, value] = Object.entries(curr)[0];
+          acc[key] = value;
+          return acc;
+        }, {});
+
+        console.log(formattedData);
+        setTableData(formattedData);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [listBondID]);
 
   return (
     <DashboardLayout>
@@ -295,7 +359,7 @@ const Page = () => {
             setSelectedRow={setSelectedRow}
             selectedPortfolio={selectedPortfolio}
             setSelectedPortfolio={setSelectedPortfolio}
-            dummyTableData={dummyTableData}
+            dummyTableData={tableData}
             setPortfolioAllocationData={setPortfolioAllocationData}
             setPortfolioAllocationLabels={setPortfolioAllocationLabels}
             setRatingAllocationData={setRatingAllocationData}
@@ -318,7 +382,10 @@ const Page = () => {
                 dummyTableData={dummyTableData}
                 oecdCountries={oecdCountries}
               />
-              <IssuerInfoCard />
+              <IssuerInfoCard
+                selectedRow={selectedRow}
+                dummyIssuerData={dummyIssuerData}
+              />
             </>
           ) : (
             <div

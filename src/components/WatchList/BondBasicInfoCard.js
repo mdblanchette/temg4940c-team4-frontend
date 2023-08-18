@@ -1,123 +1,171 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Stack,
+  CardHeader,
+} from "@mui/material";
 
 export default function BondBasicInfoCard({
   selectedRow,
   selectedPortfolio,
   dummyIssuerData,
+  dummyTableData,
 }) {
-  const [predictedIssuerRating, setPredictedIssuerRating] = useState("");
+  // const [predictedIssuerRating, setPredictedIssuerRating] = useState("");
 
-  useEffect(() => {
-    const selectedIssuer = selectedRow.issuer;
-    const issuerData = dummyIssuerData.find(
-      (issuer) => issuer.issuer === selectedIssuer
-    );
+  // useEffect(() => {
+  //   if (selectedRow) {
+  //     setPredictedIssuerRating(selectedRow.IssuerRating);
+  //     console.log(predictedIssuerRating);
+  //   } else {
+  //     console.log("not here");
+  //   }
+  //   // const selectedIssuer = selectedRow.Issuer;
 
-    if (issuerData) {
-      setPredictedIssuerRating(issuerData.predictedIssuerRating);
-    }
-    console.log("selectedRow", selectedRow);
-  }, [selectedRow, selectedPortfolio]);
+  //   // dummyTableData[selectedPortfolio]
+  //   // const issuerData = dummyIssuerData.find(
+  //   //   (issuer) => issuer.issuer === selectedIssuer
+  //   // );
+
+  //   // if (issuerData) {
+  //   //   setPredictedIssuerRating(issuerData.predictedIssuerRating);
+  //   // }
+  //   console.log("selectedRow", selectedRow);
+  // }, [selectedRow, selectedPortfolio]);
 
   const basicinfodata = [
-    { title: "Name", subtitle: selectedRow?.name || "N/A" },
-    { title: "Country", subtitle: selectedRow?.country || "N/A" },
-    { title: "Issuer", subtitle: selectedRow?.issuer || "N/A" },
-    { title: "Rating", subtitle: selectedRow?.rating || "N/A" },
-    { title: "Spread", subtitle: selectedRow?.spread || "N/A" },
-    { title: "Coupons", subtitle: selectedRow?.coupons || "N/A" },
-    { title: "Maturity Date", subtitle: selectedRow?.maturity || "N/A" },
-    { title: "Liquidity", subtitle: selectedRow?.liquidity || "N/A" },
+    { title: "Name", subtitle: selectedRow?.BondID || "N/A" },
+    { title: "Country", subtitle: selectedRow?.IssuerCountryName || "N/A" },
+    { title: "Issuer", subtitle: selectedRow?.IssuerName || "N/A" },
+    { title: "Rating", subtitle: selectedRow?.RecentBondRating || "N/A" },
+    {
+      title: "Credit Spread",
+      subtitle:
+        `${parseFloat(selectedRow?.CreditSpreadAtPriceDate).toFixed(2)} bp` ||
+        "N/A",
+    },
+    {
+      title: "Coupons",
+      subtitle: `${parseFloat(selectedRow?.CouponRate)} %` || "N/A",
+    },
+    { title: "Issue Date", subtitle: selectedRow?.IssueDate || "N/A" },
+    { title: "Maturity Date", subtitle: selectedRow?.MaturityDate || "N/A" },
+    {
+      title: "YTM",
+      subtitle:
+        parseFloat(selectedRow?.BondYTMAtPriceDate).toFixed(2).toString() ||
+        "N/A",
+    },
     {
       title: "Outstanding Amount",
-      subtitle: selectedRow?.outstandingAmount || "N/A",
+      subtitle:
+        `${parseInt(selectedRow?.FaceOutstanding) / 1000000000} B` || "N/A",
     },
-    { title: "Bid", subtitle: selectedRow?.bid || "N/A" },
-    { title: "Ask", subtitle: selectedRow?.ask || "N/A" },
-    { title: "Net Change", subtitle: selectedRow?.netChange || "N/A" },
+    {
+      title: "Bid",
+      subtitle: parseFloat(selectedRow?.Bid).toFixed(2).toString() || "N/A",
+    },
+    {
+      title: "Ask",
+      subtitle: parseFloat(selectedRow?.Ask).toFixed(2).toString() || "N/A",
+    },
   ];
 
   const bondpredictiondata = [
     {
-      title: "Predicted Issuer Credit Rating",
-      subtitle: predictedIssuerRating || "N/A",
+      title: "Predicted Credit Rating",
+      subtitle: selectedRow?.PredictedRating || "N/A",
     },
     {
-      title: "Spread Change",
-      subtitle: selectedRow?.predictedSpreadMovement || "N/A",
+      title: "Migration Probability",
+      subtitle: `${parseFloat(selectedRow?.PredictionProbability) * 100} %`,
+    } || "N/A",
+    {
+      title: "Predicted Spread Change",
+      subtitle:
+        `${parseFloat(selectedRow?.SpreadDelta).toFixed(2)} bp` || "N/A",
     },
-    { title: "Confidence Level for Spread Change", subtitle: "Subtitle 3" },
   ];
 
   return (
     <Card style={{ width: "100%", marginBottom: 20 }}>
+      <CardHeader title="Selected Bond Information"></CardHeader>
       <CardContent>
-        <Typography variant="h6">Selected Bond Information</Typography>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "20px",
-            marginTop: "10px",
-            textAlign: "center",
-          }}
-        >
-          {basicinfodata.map((data, index) => (
-            <div key={index}>
-              <Typography variant="body2" style={{ marginBottom: "5px" }}>
-                {data.title}
-              </Typography>
-              <Typography variant="subtitle1">{data.subtitle}</Typography>
-            </div>
-          ))}
-        </div>
+        <Stack spacing={4}>
+          {/* <Typography variant="h5">Selected Bond Information</Typography> */}
+          <Card>
+            <CardHeader title="Basic Information"></CardHeader>
+            <CardContent>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "20px",
+                  textAlign: "center",
+                }}
+              >
+                {basicinfodata.map((data, index) => (
+                  <Stack key={index} sx={{ alignItems: "start" }}>
+                    <Typography style={{ marginBottom: "5px" }}>
+                      {data.title}
+                    </Typography>
+                    <Typography variant="h6">{data.subtitle}</Typography>
+                  </Stack>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-        <Box
-          style={{
-            background: "#E0F0FF",
-            padding: "10px",
-            marginTop: "20px",
-          }}
-        >
-          <Typography variant="h6">Bond Prediction</Typography>
-          <div
+          <Card sx={{ background: "#E0F0FF" }}>
+            <CardHeader title="Bond Prediction for Year 2024"></CardHeader>
+            {/* <Typography variant="h6">Bond Prediction for Year 2024</Typography> */}
+            <CardContent>
+              <Stack spacing={2}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    textAlign: "center",
+                  }}
+                >
+                  {bondpredictiondata.map((data, index) => (
+                    <Stack sx={{ alignItems: "start" }} key={index}>
+                      <Typography style={{ marginBottom: "5px" }}>
+                        {data.title}
+                      </Typography>
+                      <Typography variant="h6">{data.subtitle}</Typography>
+                    </Stack>
+                  ))}
+                </div>
+                <Typography>
+                  {" "}
+                  Confidence Level:{" "}
+                  <Typography component="span" fontWeight="bold">
+                    {(parseFloat(selectedRow?.SpreadConfidence) * 100).toFixed(
+                      2
+                    )}{" "}
+                    %
+                  </Typography>
+                </Typography>
+              </Stack>
+            </CardContent>
+          </Card>
+
+          {/* <Box
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "10px",
-              marginTop: "10px",
-              textAlign: "center",
+              background: "white",
+              border: "1px solid #ccc",
+              padding: "10px",
+              marginTop: "20px",
             }}
           >
-            {bondpredictiondata.map((data, index) => (
-              <div key={index}>
-                <Typography variant="body2" style={{ marginBottom: "5px" }}>
-                  {data.title}
-                </Typography>
-                <Typography variant="subtitle1">{data.subtitle}</Typography>
-              </div>
-            ))}
-          </div>
-          <Typography
-            variant="body2"
-            style={{ fontWeight: "bold", marginTop: "10px" }}
-          >
-            Average Credit Rating and Price Correlation: x%
-          </Typography>
-        </Box>
-
-        <Box
-          style={{
-            background: "white",
-            border: "1px solid #ccc",
-            padding: "10px",
-            marginTop: "20px",
-          }}
-        >
-          <Typography variant="h6">Bond Trends</Typography>
-          {/* Add your content for Bond Trends here */}
-        </Box>
+            <Typography variant="h6">Bond Trends</Typography>
+            Add your content for Bond Trends here
+          </Box> */}
+        </Stack>
       </CardContent>
     </Card>
   );

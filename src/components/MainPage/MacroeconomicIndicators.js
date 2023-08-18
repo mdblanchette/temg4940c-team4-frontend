@@ -81,7 +81,7 @@ export default function MacroeconomicIndicators({
 
   async function getMacroData(selectedCountryCode, indicator) {
     const fetch_link =
-      "http://localhost:3500/macro/" +
+      "http://35.220.165.226/api/macro/" +
       convertTitleToKey(indicator) +
       "/" +
       selectedCountryCode;

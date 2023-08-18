@@ -114,7 +114,7 @@ export default function Map({
 
   async function getPredictionData(countryCode) {
     const fetch_link =
-      "http://localhost:3500/prediction/creditMigration2024/country/" +
+      "http://35.220.165.226/api/prediction/creditMigration2024/country/" +
       countryCode;
     const res = await fetch(fetch_link);
     const parsed_res = await res.json();

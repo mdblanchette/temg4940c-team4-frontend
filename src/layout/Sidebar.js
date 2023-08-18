@@ -171,7 +171,7 @@ export default function MiniDrawer({ children }) {
             aria-label="alertNotif"
           >
             {/* <NotificationsNoneOutlinedIcon /> */}
-            <Badge color="error" badgeContent={4}>
+            <Badge color="error" badgeContent={2}>
               <NotificationsNoneOutlinedIcon />
             </Badge>
           </IconButton>

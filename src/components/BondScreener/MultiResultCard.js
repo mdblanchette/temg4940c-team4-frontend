@@ -23,7 +23,7 @@ import dayjs from "dayjs";
 import { countryInfo } from "./BondInfoTable";
 
 export default function MultiResultCard() {
-  const apiEndPoint = "http://localhost:3500/";
+  const apiEndPoint = "http://35.220.165.226/api/";
   const countryNames = countryInfo.map((country) => country.name);
   const [openSetting, setOpenSetting] = useState(false); // open AdvancedSearch, retrieve updated filter
   const [searchTerm, setSearchTerm] = useState(""); // value for dummy search bar

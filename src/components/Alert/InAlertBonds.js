@@ -135,7 +135,7 @@ function renderCellExpand(params) {
 }
 
 export default function InAlertBonds({ handleCloseAlert }) {
-  const apiEndPoint = "http://localhost:3500/";
+  const apiEndPoint = "http://35.220.165.226/api/";
   const [alertSetting, setAlertSetting] = useState({
     Indicator: "Based on Predicted Rating Migration",
     valueSpread: [0, 1000],
@@ -146,20 +146,10 @@ export default function InAlertBonds({ handleCloseAlert }) {
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [displayedBond, setDisplayedBond] = useState([]);
   const [listPortfolio, setListPortfolio] = useState({
-    A: ["44658909176", "15628972515"],
+    A: ["44658909176"],
     B: ["46633294394", "44658909176"],
-    C: ["15628972515"],
   });
-  const [listBondID, setListBondID] = useState(listPortfolio.A);
-
-  useEffect(() => {
-    const storedPortfolio = localStorage.getItem(keyPortfolioList);
-    if (storedPortfolio) {
-      setListPortfolio(JSON.parse(storedPortfolio));
-    } else {
-      setListPortfolio(listPortfolio);
-    }
-  }, []);
+  const [listBondID, setListBondID] = useState("A");
 
   useEffect(() => {
     const storedAlertSetting = localStorage.getItem(keyAlertSetting);
@@ -230,46 +220,40 @@ export default function InAlertBonds({ handleCloseAlert }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        //const response = await fetch(apiEndPoint + "bond");
-        // if (!response.ok) {
-        //   throw new Error("Failed to fetch data from the API.");
-        // }
-        // const data = await response.json();
+        const response = await fetch(apiEndPoint + "bond/all/withPred");
+        if (!response.ok) {
+          throw new Error("Failed to fetch data from the API.");
+        }
+        const data = await response.json();
+        console.log(data);
 
-        const defaultRetrievedID = listBondID;
+        const objectsCurrentPortfolio = listPortfolio[listBondID].map(
+          (bondID) => {
+            const foundBond = data.find((bond) => bond.BondID === bondID);
 
-        const requests = defaultRetrievedID.map((url) =>
-          fetch(apiEndPoint + "bond/" + url).then((response) => response.json())
+            if (foundBond) {
+              return {
+                ...foundBond,
+              };
+            }
+
+            // Handle the case where a bond with the given ID is not found
+            return null;
+          }
         );
-        const data = await Promise.all(requests);
 
-        // Combine all objects into a single array
-        const rows = data.flatMap((obj) => Object.values(obj));
+        // return {
+        //   [key]: objects.filter((object) => object !== null),
+        // };
 
-        console.log(rows);
-        // var normalizedData = rows.map(function (obj) {
-        //   var normalizedObj = {};
+        // const formattedData = newArray.reduce((acc, curr) => {
+        //   const [key, value] = Object.entries(curr)[0];
+        //   acc[key] = value;
+        //   return acc;
+        // }, {});
 
-        //   for (var key in obj) {
-        //     if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        //       var normalizedKey = key.trim();
-        //       if (normalizedKey === "﻿BondID") normalizedKey = "BondID"; // Correcting the property name
-        //       normalizedObj[normalizedKey] = obj[key];
-        //     }
-        //   }
-
-        //   // if (
-        //   //   normalizedObj.BondID === "46633294394" ||
-        //   //   normalizedObj.BondID === "44658909176"
-        //   // ) {
-        //   //   console.log(normalizedObj);
-        //   // }
-
-        //   return normalizedObj;
-        // });
-
-        setDisplayedBond(rows);
-        console.log("displayed bond: ", rows);
+        console.log(objectsCurrentPortfolio);
+        setDisplayedBond(objectsCurrentPortfolio);
       } catch (error) {
         console.error(error);
       }
@@ -287,9 +271,9 @@ export default function InAlertBonds({ handleCloseAlert }) {
       headerClassName: "super-app-theme--header",
     },
     {
-      field: "Company Headquarter",
+      field: "IssuerCountry",
       headerName: "Country",
-      width: 180,
+      width: 200,
       align: "left",
       headerClassName: "super-app-theme--header",
       renderCell: renderCellExpand,
@@ -305,7 +289,7 @@ export default function InAlertBonds({ handleCloseAlert }) {
       },
     },
     {
-      field: "MoodysRating",
+      field: "RecentBondRating",
       headerName: "Credit Rating",
       width: 120,
       align: "left",
@@ -313,15 +297,92 @@ export default function InAlertBonds({ handleCloseAlert }) {
       valueFormatter: (params) => (params.value ? params.value : "N/A"),
     },
     {
-      field: "Issuer",
+      field: "PredictedRating",
+      headerName: "Predicted Rating",
+      width: 150,
+      align: "left",
+      headerClassName: "super-app-theme--header",
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
+    },
+    {
+      field: "PredictionProbability",
+      headerName: "Probability",
+      width: 100,
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value) * 100;
+      },
+      valueFormatter: (params) => {
+        if (params.value == null) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} %`;
+      },
+    },
+    {
+      field: "PredictedSpread",
+      headerName: "Predicted Spread",
+      width: 150,
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value);
+      },
+      valueFormatter: (params) => {
+        if (params.value == null || isNaN(params.value)) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} bp`;
+      },
+    },
+    {
+      field: "SpreadDelta",
+      headerName: "Spread Change",
+      width: 140,
+      align: "left",
+      type: "number",
+
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value).toFixed(2);
+      },
+      valueFormatter: (params) => {
+        if (params.value == null) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} bp`;
+      },
+    },
+    {
+      field: "SpreadConfidence",
+      headerName: "Confidence",
+      width: 100,
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value).toFixed(2) * 100;
+      },
+      valueFormatter: (params) => {
+        if (params.value == null || isNaN(params.value)) {
+          return "N/A";
+        }
+        return `${params.value.toLocaleString()} %`;
+      },
+    },
+    {
+      field: "IssuerName",
       headerName: "Issuer",
-      width: 200,
+      width: 220,
       align: "left",
       headerClassName: "super-app-theme--header",
       renderCell: renderCellExpand,
     },
     {
-      field: "MoodyIssuerRating",
+      field: "IssuerRating",
       headerName: "Issuer Rating",
       width: 120,
       align: "left",
@@ -336,29 +397,7 @@ export default function InAlertBonds({ handleCloseAlert }) {
       width: 120,
       headerClassName: "super-app-theme--header",
       valueGetter: (params) =>
-        params.value ? dayjs(params.value).format("DD/MM/YYYY") : null,
-      valueFormatter: (params) => {
-        try {
-          const date = new Date(params.value);
-          if (date instanceof Date && !isNaN(date.getTime())) {
-            return `${params.value.toLocaleString()}`;
-          } else {
-            return "N/A";
-          }
-        } catch (error) {
-          return "N/A";
-        }
-      },
-    }, //DD/MM/YYY format
-    {
-      field: "Maturity",
-      headerName: "Mature Date",
-      type: "date",
-      align: "left",
-      width: 120,
-      headerClassName: "super-app-theme--header",
-      valueGetter: (params) =>
-        params.value ? dayjs(params.value).format("DD/MM/YYYY") : null,
+        params.value ? dayjs(params.value).format("YYYY-MM-DD") : null,
       valueFormatter: (params) => {
         try {
           const date = new Date(params.value);
@@ -373,31 +412,86 @@ export default function InAlertBonds({ handleCloseAlert }) {
       },
     },
     {
-      field: "CouponFrequency",
-      headerName: "Maturity",
+      field: "MaturityDate",
+      headerName: "Mature Date",
+      type: "date",
+      align: "left",
+      width: 120,
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) =>
+        params.value ? dayjs(params.value).format("YYYY-MM-DD") : null,
+      valueFormatter: (params) => {
+        try {
+          const date = new Date(params.value);
+          if (date instanceof Date && !isNaN(date.getTime())) {
+            return `${params.value.toLocaleString()}`;
+          } else {
+            return "N/A";
+          }
+        } catch (error) {
+          return "N/A";
+        }
+      },
+    },
+    // {
+    //   field: "CouponFrequency",
+    //   headerName: "Maturity",
+    //   type: "number",
+    //   align: "left",
+    //   headerClassName: "super-app-theme--header",
+    //   valueGetter: ({ row }) => {
+    //     if (!row.IssueDate || !row.Maturity) {
+    //       return null;
+    //     }
+    //     return (
+    //       (dayjs(row.Maturity) - dayjs(row.IssueDate)) /
+    //       (1000 * 60 * 60 * 24 * 365)
+    //     );
+    //   },
+    //   valueFormatter: (params) => {
+    //     if (params.value == null || params.value == undefined) {
+    //       return "N/A";
+    //     } else {
+    //       if (params.value < 1) {
+    //         return "< 1 year";
+    //       } else {
+    //         return `${Math.round(params.value).toLocaleString()} years`;
+    //       }
+    //     }
+    //   },
+    // },
+    {
+      field: "BondYTMAtPriceDate",
+      headerName: "YTM",
+      align: "left",
+      type: "number",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value).toFixed(2);
+      },
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
+    },
+    {
+      field: "Bid",
+      headerName: "Bid Price",
       type: "number",
       align: "left",
       headerClassName: "super-app-theme--header",
-      valueGetter: ({ row }) => {
-        if (!row.IssueDate || !row.Maturity) {
-          return null;
-        }
-        return (
-          (dayjs(row.Maturity) - dayjs(row.IssueDate)) /
-          (1000 * 60 * 60 * 24 * 365)
-        );
+      valueGetter: (params) => {
+        return parseFloat(params.value);
       },
-      valueFormatter: (params) => {
-        if (params.value == null || params.value == undefined) {
-          return "N/A";
-        } else {
-          if (params.value < 1) {
-            return "< 1 year";
-          } else {
-            return `${Math.round(params.value).toLocaleString()} years`;
-          }
-        }
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
+    },
+    {
+      field: "Ask",
+      headerName: "Ask Price",
+      type: "number",
+      align: "left",
+      headerClassName: "super-app-theme--header",
+      valueGetter: (params) => {
+        return parseFloat(params.value);
       },
+      valueFormatter: (params) => (params.value ? params.value : "N/A"),
     },
     {
       field: "CouponRate",
@@ -473,11 +567,11 @@ export default function InAlertBonds({ handleCloseAlert }) {
                 variant="standard"
                 defaultValue="A"
               >
-                {["A", "B", "C"].map((option) => (
+                {["A", "B"].map((option) => (
                   <MenuItem
                     key={option}
                     value={option}
-                    onClick={() => setListBondID(listPortfolio[option])}
+                    onClick={() => setListBondID(option)}
                   >
                     Portfolio {option}
                   </MenuItem>
@@ -497,8 +591,13 @@ export default function InAlertBonds({ handleCloseAlert }) {
                 columns: {
                   columnVisibilityModel: {
                     BondID: false,
+                    IssuerRating: false,
                     IssueDate: false,
-                    //Maturity: false,
+                    MaturityDate: false,
+                    Bid: false,
+                    Ask: false,
+                    FaceOutstanding: false,
+                    CouponRate: false,
                   },
                 },
               }}
