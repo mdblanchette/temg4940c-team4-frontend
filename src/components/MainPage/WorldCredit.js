@@ -148,7 +148,9 @@ export default function WorldCredit({
           </Grid>
           <Grid item xs={6}>
             <Typography>Confidence</Typography>
-            <Typography variant="h5">{confidence}</Typography>
+            <Typography variant="h5">
+              {selectedCountryCode === "Global" ? "-" : confidence}
+            </Typography>
           </Grid>
         </Grid>
       </CardContent>
