@@ -470,14 +470,14 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "BondID",
       headerName: "Bond ID",
-      width: 140,
+      //width: 140,
       align: "left",
       headerClassName: "super-app-theme--header",
     },
     {
       field: "IssuerCountry",
       headerName: "Country",
-      width: 200,
+      width: 120,
       align: "left",
       headerClassName: "super-app-theme--header",
       renderCell: renderCellExpand,
@@ -503,7 +503,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "PredictedRating",
       headerName: "Predicted Rating",
-      width: 150,
+      width: 140,
       align: "left",
       headerClassName: "super-app-theme--header",
       valueFormatter: (params) => (params.value ? params.value : "N/A"),
@@ -512,7 +512,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "PredictionProbability",
       headerName: "Probability",
-      width: 100,
+      //width: 100,
       align: "left",
       type: "number",
       headerClassName: "super-app-theme--header",
@@ -564,7 +564,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "SpreadConfidence",
       headerName: "Confidence",
-      width: 100,
+      //width: 100,
       align: "left",
       type: "number",
       headerClassName: "super-app-theme--header",
@@ -581,7 +581,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "IssuerName",
       headerName: "Issuer",
-      width: 220,
+      //width: 220,
       align: "left",
       headerClassName: "super-app-theme--header",
       renderCell: renderCellExpand,
@@ -589,7 +589,7 @@ export default function BondInfoTable({ dataBonds }) {
     {
       field: "IssuerRating",
       headerName: "Issuer Rating",
-      width: 120,
+      //width: 120,
       align: "left",
       headerClassName: "super-app-theme--header",
       valueFormatter: (params) => (params.value ? params.value : "N/A"),
@@ -599,7 +599,7 @@ export default function BondInfoTable({ dataBonds }) {
       headerName: "Issue Date",
       type: "date",
       align: "left",
-      width: 120,
+      //width: 120,
       headerClassName: "super-app-theme--header",
       valueGetter: (params) =>
         params.value ? dayjs(params.value).format("YYYY-MM-DD") : null,
@@ -621,7 +621,7 @@ export default function BondInfoTable({ dataBonds }) {
       headerName: "Mature Date",
       type: "date",
       align: "left",
-      width: 120,
+      //width: 120,
       headerClassName: "super-app-theme--header",
       valueGetter: (params) =>
         params.value ? dayjs(params.value).format("YYYY-MM-DD") : null,
@@ -791,6 +791,9 @@ export default function BondInfoTable({ dataBonds }) {
                   MaturityDate: false,
                   Bid: false,
                   Ask: false,
+                  SpreadConfidence: false,
+                  BondYTMAtPriceDate: false,
+                  IssuerRating: false,
                 },
               },
             }}

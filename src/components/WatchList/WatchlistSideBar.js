@@ -141,7 +141,7 @@ export default function WatchlistSideBar({
   }, [selectedPortfolio]);
 
   return (
-    <Card style={{ width: "400px", height: "100%" }}>
+    <Card style={{ height: "100%" }}>
       <CardContent
         style={{ display: "flex", flexDirection: "column", height: "100%" }}
       >

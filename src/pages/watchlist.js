@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, Grid, Container, Box } from "@mui/material";
 import { Layout as DashboardLayout } from "../layout/Layout";
 import WatchlistSideBar from "../components/WatchList/WatchlistSideBar";
 import BondBasicInfoCard from "../components/WatchList/BondBasicInfoCard"; // Make sure to use the correct import path
@@ -274,9 +274,9 @@ const Page = () => {
   const [maturityAllocationData, setMaturityAllocationData] = useState([]);
   const [maturityAllocationLabels, setMaturityAllocationLabels] = useState([]);
   const [listBondID, setListBondID] = useState({
-    A: ["44658909176", "15628972515"],
-    B: ["46633294394", "44658909176"],
-    C: ["15628972515"],
+    A: ["44653218346", "232808000000", "192884000000"],
+    B: ["15631047028", "46635881744", "192761000000", "232768000000"],
+    C: ["192884000000", "232768000000"],
   });
   const [tableData, setTableData] = useState({});
 
@@ -288,6 +288,7 @@ const Page = () => {
 
   // get BondID of each portfolio
   useEffect(() => {
+    localStorage.clear();
     const storedPortfolio = localStorage.getItem(keyPortfolioList);
     if (storedPortfolio) {
       setListBondID(JSON.parse(storedPortfolio));
@@ -343,69 +344,90 @@ const Page = () => {
 
   return (
     <DashboardLayout>
-      <CssBaseline />
-      <div style={{ display: "flex", minHeight: "100vh" }}>
-        <div
-          style={{
-            width: "420px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-          <WatchlistSideBar
-            selectedRow={selectedRow}
-            onRowClick={handleRowClick}
-            setSelectedRow={setSelectedRow}
-            selectedPortfolio={selectedPortfolio}
-            setSelectedPortfolio={setSelectedPortfolio}
-            dummyTableData={tableData}
-            setPortfolioAllocationData={setPortfolioAllocationData}
-            setPortfolioAllocationLabels={setPortfolioAllocationLabels}
-            setRatingAllocationData={setRatingAllocationData}
-            setRatingAllocationLabels={setRatingAllocationLabels}
-            setMaturityAllocationData={setMaturityAllocationData}
-            setMaturityAllocationLabels={setMaturityAllocationLabels}
-          />
-        </div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-          {selectedRow !== -1 ? (
-            <>
-              <BondBasicInfoCard
-                selectedRow={selectedRow}
-                selectedPortfolio={selectedPortfolio}
-                dummyTableData={dummyTableData}
-                dummyIssuerData={dummyIssuerData}
-              />
-              <CountryInfoCard
-                selectedRow={selectedRow}
-                dummyTableData={dummyTableData}
-                oecdCountries={oecdCountries}
-              />
-              <IssuerInfoCard
-                selectedRow={selectedRow}
-                dummyIssuerData={dummyIssuerData}
-              />
-            </>
-          ) : (
-            <div
-              style={{ display: "flex", flexDirection: "column", gap: "20px" }}
-            >
-              <PortfolioAllocationCard
-                selectedPortfolio={selectedPortfolio}
-                portfolioAllocationData={portfolioAllocationData}
-                portfolioAllocationLabels={portfolioAllocationLabels}
-              />
-              <PortfolioPerformanceCard
-                ratingAllocationData={ratingAllocationData}
-                ratingAllocationLabels={ratingAllocationLabels}
-                maturityAllocationData={maturityAllocationData}
-                maturityAllocationLabels={maturityAllocationLabels}
-              />
+      <Container
+        maxWidth="xxl"
+        sx={{
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        {/* <div style={{ display: "flex", minHeight: "100vh" }}> */}
+        <Grid container sx={{ flexGrow: 1 }} spacing={4}>
+          <Grid item sm={4} sx={{ flexGrow: 1 }}>
+            {/* <div
+              style={{
+                width: "420px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+            > */}
+            <WatchlistSideBar
+              selectedRow={selectedRow}
+              onRowClick={handleRowClick}
+              setSelectedRow={setSelectedRow}
+              selectedPortfolio={selectedPortfolio}
+              setSelectedPortfolio={setSelectedPortfolio}
+              dummyTableData={tableData}
+              setPortfolioAllocationData={setPortfolioAllocationData}
+              setPortfolioAllocationLabels={setPortfolioAllocationLabels}
+              setRatingAllocationData={setRatingAllocationData}
+              setRatingAllocationLabels={setRatingAllocationLabels}
+              setMaturityAllocationData={setMaturityAllocationData}
+              setMaturityAllocationLabels={setMaturityAllocationLabels}
+            />
+          </Grid>
+
+          <Grid item sm={8} sx={{ flexGrow: 1 }}>
+            {/* <div style={{ width: "65%" }}> */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+              {selectedRow !== -1 ? (
+                <>
+                  <BondBasicInfoCard
+                    selectedRow={selectedRow}
+                    selectedPortfolio={selectedPortfolio}
+                    dummyTableData={dummyTableData}
+                    dummyIssuerData={dummyIssuerData}
+                  />
+                  <CountryInfoCard
+                    selectedRow={selectedRow}
+                    dummyTableData={dummyTableData}
+                    oecdCountries={oecdCountries}
+                  />
+                  <IssuerInfoCard
+                    selectedRow={selectedRow}
+                    dummyIssuerData={dummyIssuerData}
+                  />
+                </>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "20px",
+                  }}
+                >
+                  <PortfolioAllocationCard
+                    selectedPortfolio={selectedPortfolio}
+                    portfolioAllocationData={portfolioAllocationData}
+                    portfolioAllocationLabels={portfolioAllocationLabels}
+                  />
+                  <PortfolioPerformanceCard
+                    ratingAllocationData={ratingAllocationData}
+                    ratingAllocationLabels={ratingAllocationLabels}
+                    maturityAllocationData={maturityAllocationData}
+                    maturityAllocationLabels={maturityAllocationLabels}
+                  />
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+            {/* </div> */}
+          </Grid>
+        </Grid>
+
+        {/* </div> */}
+      </Container>
     </DashboardLayout>
   );
 };

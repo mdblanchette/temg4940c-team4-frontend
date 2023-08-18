@@ -146,8 +146,8 @@ export default function InAlertBonds({ handleCloseAlert }) {
   const [openAlertModal, setOpenAlertModal] = useState(false);
   const [displayedBond, setDisplayedBond] = useState([]);
   const [listPortfolio, setListPortfolio] = useState({
-    A: ["44658909176"],
-    B: ["46633294394", "44658909176"],
+    A: ["232808000000"],
+    B: ["15631047028", "46635881744"],
   });
   const [listBondID, setListBondID] = useState("A");
 

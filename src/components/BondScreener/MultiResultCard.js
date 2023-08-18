@@ -385,7 +385,7 @@ export default function MultiResultCard() {
   }, [displayedBond]);
 
   return (
-    <Card fullWidth sx={{ width: "100%" }}>
+    <Card sx={{ width: "90vw" }}>
       <CardContent>
         <Stack spacing={2}>
           {/* title of the card */}
