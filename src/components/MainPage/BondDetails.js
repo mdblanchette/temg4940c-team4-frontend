@@ -30,6 +30,13 @@ export default function BondDetails({
       >
         <Card sx={{ py: 0 }}>
           <CardHeader
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              textAlign: "center",
+              padding: 2,
+            }}
             action={
               <Box>
                 <Button variant="outlined">View Company</Button>

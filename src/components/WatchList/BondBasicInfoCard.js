@@ -7,6 +7,8 @@ import {
   Stack,
   CardHeader,
 } from "@mui/material";
+import BondSpreadChart from "./BondSpreadChart";
+import BondCreditRatingChart from "./BondCreditRatingChart";
 
 export default function BondBasicInfoCard({
   selectedRow,
@@ -154,17 +156,21 @@ export default function BondBasicInfoCard({
             </CardContent>
           </Card>
 
-          {/* <Box
-            style={{
-              background: "white",
-              border: "1px solid #ccc",
-              padding: "10px",
-              marginTop: "20px",
-            }}
-          >
-            <Typography variant="h6">Bond Trends</Typography>
-            Add your content for Bond Trends here
-          </Box> */}
+          <Card>
+            <CardHeader title="Bond Trends" />
+            <CardContent>
+              <Box
+                style={{
+                  background: "white",
+                  padding: "10px",
+                  marginTop: "20px",
+                }}
+              >
+                <BondSpreadChart />
+                <BondCreditRatingChart />
+              </Box>
+            </CardContent>
+          </Card>
         </Stack>
       </CardContent>
     </Card>

@@ -46,7 +46,7 @@ export default function BondPredictionCard({ predictionData }) {
         //     ))}
         //   </TextField>
         // }
-        title="Bond Prediction for Year 2024"
+        title="Average Bond Prediction for Year 2024"
       />
 
       <CardContent>

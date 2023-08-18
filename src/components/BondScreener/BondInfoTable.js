@@ -24,7 +24,6 @@ import {
   MarkChatUnread,
 } from "@mui/icons-material";
 import { useState, useEffect, memo, useRef } from "react";
-import axios from "axios";
 import dayjs from "dayjs";
 import AlertSetting from "../Alert/AlertSetting";
 

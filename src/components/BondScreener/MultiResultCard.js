@@ -456,6 +456,7 @@ export default function MultiResultCard() {
 
           <BondInfoTable dataBonds={displayedBond} />
           <BondPredictionCard predictionData={predictionData} />
+          <BondTrendCard />
           {/* <BondTrendCard
             indicatorA="Average Price History"
             dataA={dataATrend}
