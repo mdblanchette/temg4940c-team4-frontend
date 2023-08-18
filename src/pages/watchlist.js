@@ -279,6 +279,63 @@ const Page = () => {
     C: ["192884000000", "232768000000"],
   });
   const [tableData, setTableData] = useState({});
+  const renderPortfolioGraphs = (
+    setPortfolioData,
+    selectedPortfolio,
+    dummyTableData,
+    setPortfolioAllocationLabels,
+    setRatingAllocationData,
+    setRatingAllocationLabels,
+    setMaturityAllocationData,
+    setMaturityAllocationLabels
+  ) => {
+    const portfolioData = [];
+    const portfolioAllocationLabels = [];
+    const portfolioRatingData = [];
+    const portfolioRatingLabels = [];
+    const portfolioMaturityData = [];
+    const portfolioMaturityLabels = [];
+
+    dummyTableData[selectedPortfolio]?.map((item) => {
+      //portfolioData.push(item.allocation);
+      portfolioData.push(100 / dummyTableData[selectedPortfolio].length);
+      portfolioAllocationLabels.push(item.BondID);
+      portfolioRatingData.push(item.RecentBondRating);
+      portfolioRatingLabels.push(item.BondID);
+      portfolioMaturityData.push(
+        parseFloat(item.BondYTMAtPriceDate).toFixed(2)
+      );
+      portfolioMaturityLabels.push(item.BondID);
+    });
+
+    console.log(dummyTableData);
+
+    setPortfolioData(portfolioData);
+    console.log("portfolio data:", portfolioData);
+    setPortfolioAllocationLabels(portfolioAllocationLabels);
+    // Get unique ratings so that there are no duplicates, sort them in increasing alphabetical order
+    const uniqueRatingDataLabels = [...new Set(portfolioRatingData)].sort(
+      (a, b) => a.localeCompare(b)
+    );
+
+    setRatingAllocationLabels(uniqueRatingDataLabels);
+
+    // Counts of each rating
+    const ratingCounts = uniqueRatingDataLabels.map((rating) => {
+      return portfolioRatingData.filter((item) => item === rating).length;
+    });
+    setRatingAllocationData(ratingCounts);
+
+    // Get unique maturities so that there are no duplicates
+    const uniqueMaturityDataLabels = [...new Set(portfolioMaturityData)];
+    setMaturityAllocationLabels(uniqueMaturityDataLabels);
+
+    // Counts of each maturity
+    const maturityCounts = uniqueMaturityDataLabels.map((maturity) => {
+      return portfolioMaturityData.filter((item) => item === maturity).length;
+    });
+    setMaturityAllocationData(maturityCounts);
+  };
 
   const handleRowClick = (rowData) => {
     setSelectedRow(rowData === selectedRow ? -1 : rowData);
@@ -341,6 +398,19 @@ const Page = () => {
 
     fetchData();
   }, [listBondID]);
+
+  useEffect(() => {
+    renderPortfolioGraphs(
+      setPortfolioAllocationData,
+      selectedPortfolio,
+      tableData,
+      setPortfolioAllocationLabels,
+      setRatingAllocationData,
+      setRatingAllocationLabels,
+      setMaturityAllocationData,
+      setMaturityAllocationLabels
+    );
+  });
 
   return (
     <DashboardLayout>
