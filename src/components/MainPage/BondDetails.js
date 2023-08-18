@@ -132,7 +132,7 @@ export default function BondDetails({
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="h6" align="center">
-                  Confidence Level
+                  Confidence
                 </Typography>
                 <Typography align="center">
                   {bondInfo.ratingConfidence * 100 + "%"}
@@ -140,7 +140,7 @@ export default function BondDetails({
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="h6" align="center">
-                  Confidence Level
+                  Confidence
                 </Typography>
                 <Typography align="center">
                   {bondInfo.migrationConfidence * 100 + "%"}
