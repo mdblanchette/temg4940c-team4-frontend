@@ -130,12 +130,10 @@ export default function Map({
       (c) => c.code === countryCode
     );
     let migration = predictionData.predictedMigration;
-    if (migration === "N/A") return "#D6D6DA";
-    migration = parseFloat(migration);
-    if (migration >= 2) return "#009444";
-    else if (migration >= 1) return "#8dc740";
-    else if (migration >= 0) return "#ffde18";
-    else if (migration >= -1) return "#f46522";
+    if (migration === "N/A") migration = 0;
+    migration = parseInt(migration);
+    if (migration > 0) return "#009444";
+    else if (migration === 0) return "#ffde18";
     else return "#ed1c25";
   }
 
@@ -145,8 +143,8 @@ export default function Map({
       const country = countryCreditMigrationCopy[i];
       const predictionData = await getPredictionData(country.code);
       let migration = predictionData["Yearly Average Credit Migration"];
-      if (migration === "N/A") migration = "N/A";
-      else migration = parseFloat(migration);
+      if (migration === "N/A") migration = 0;
+      else migration = Math.round(migration);
       countryCreditMigrationCopy[i].predictedMigration = migration;
     }
     setCountryCreditMigration(countryCreditMigrationCopy);

@@ -19,7 +19,7 @@ export default function MacroeconomicIndicators({
   selectedCountryFlag,
 }) {
   const [timeframe, setTimeframe] = useState("Latest");
-  const [indicatorA, setIndicatorA] = useState("Corporate Income Tax Rate");
+  const [indicatorA, setIndicatorA] = useState("Government Spending");
   const [indicatorB, setIndicatorB] = useState("Current Account Balance");
   const [indicatorA_Data, setIndicatorA_Data] = useState([]);
   const [indicatorB_Data, setIndicatorB_Data] = useState([]);
